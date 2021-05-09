@@ -9,17 +9,17 @@ export default function Home(props) {
 
   const [session, loading] = useSession();
 
-  console.log(session);
-
   return (
     <div>
-      <h1>Search for movies </h1>
+      <h1 className="h1-head">Search for movies </h1>
 
       <input
         type="text"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
+
+      <button>Search</button>
 
       {session && <h1> Hello {session.user.name} </h1>}
     </div>

@@ -1,10 +1,55 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSession, getSession } from "next-auth/client";
 import { connectToDatabase } from "../../util/db";
+import { addMovieToList, removeMovieInList } from "../../util/movieSearch";
 
 const profile = (props) => {
   console.log(props.likedMovies);
-  return <div>im a profile</div>;
+
+  const [session, loading] = useSession();
+  const [movieList, setMovieList] = useState(props.likedMovies);
+
+  const addMovieToListHandler = async (imdbId) => {
+    if (session) {
+      const { response, data } = await addMovieToList(
+        imdbId,
+        session.user.email
+      );
+
+      setMovieList(data);
+    }
+  };
+
+  const removeMovieInListHandler = async (imdbId) => {
+    if (session) {
+      const { response, data } = await removeMovieInList(
+        imdbId,
+        session.user.email
+      );
+
+      setMovieList(data);
+    }
+  };
+  return (
+    <div>
+      {movieList.length === 5 && <h1> YOUVE REACHCHED THE LIMIT SON</h1>}
+      {movieList.map((e) => (
+        <div key={e.imdbID}>
+          <p>
+            {e.Title} - {e.imdbID}
+          </p>
+
+          <button onClick={() => addMovieToListHandler(e.imdbID)}>Add</button>
+          <button onClick={() => removeMovieInListHandler(e.imdbID)}>
+            Remove
+          </button>
+
+          <br />
+          <hr />
+        </div>
+      ))}
+    </div>
+  );
 };
 
 export async function getServerSideProps(ctx) {
@@ -26,6 +71,7 @@ export async function getServerSideProps(ctx) {
 
   const userProfile = await db.findOne({ email: session.user.email });
 
+  const nominationLimit = userProfile.likedMovies.length === 5 ? true : false;
   client.close();
   ///console.log(userProfile);
 
@@ -34,6 +80,7 @@ export async function getServerSideProps(ctx) {
       session: session,
       likedMovies: userProfile.likedMovies,
       email: userProfile.email,
+      limit: nominationLimit,
     },
   };
 }

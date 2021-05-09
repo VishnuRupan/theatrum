@@ -1,18 +1,72 @@
-import React from "react";
+import { useState } from "react";
 import Head from "next/head";
 import axios from "axios";
-import { searchForMovies } from "../../util/movieSearch";
+import {
+  addMovieToList,
+  removeMovieInList,
+  searchForMovies,
+} from "../../util/movieSearch";
 import { getPropsMovieData } from "../../util/componentHelper";
+import { getSession, useSession } from "next-auth/client";
 
 const MovieSearch = (props) => {
   const result = getPropsMovieData(props);
+  const [session, loading] = useSession();
+  const [error, setError] = useState("none");
+  const [isLogged, setIsLogged] = useState(false);
+
+  const addMovieToListHandler = async (imdbId) => {
+    if (session) {
+      setIsLogged(true);
+      const { response, data } = await addMovieToList(
+        imdbId,
+        session.user.email
+      );
+
+      if (!response.ok) {
+        setError("failedAdd");
+      } else {
+        setError("none");
+      }
+    } else {
+      setIsLogged(false);
+    }
+  };
+
+  const removeMovieFromListHandler = async (imdbId) => {
+    if (session) {
+      setIsLogged(true);
+      const { response, data } = await removeMovieInList(
+        imdbId,
+        session.user.email
+      );
+
+      if (!response.ok) {
+        setError("failedRemove");
+      } else {
+        setError("none");
+      }
+    } else {
+      setIsLogged(false);
+    }
+  };
 
   return (
     <div>
       {result.map((e) => (
-        <p key={e.imdbID}>
-          {e.Title} - {e.imdbID}
-        </p>
+        <div key={e.imdbID}>
+          <p>
+            {e.Title} - {e.imdbID}
+          </p>
+
+          <button onClick={() => addMovieToListHandler(e.imdbID)}>Add</button>
+          <button onClick={() => removeMovieFromListHandler(e.imdbID)}>
+            Remove
+          </button>
+
+          <br />
+          <hr />
+        </div>
       ))}
     </div>
   );
