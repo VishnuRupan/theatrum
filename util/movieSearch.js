@@ -10,13 +10,13 @@ export const searchForMovies = async (title, year) => {
   console.log(process.env.API_KEY);
 
   response = await axios.get(
-    `http://www.omdbapi.com/?s=${safeTitle}&y=${safeYear}&apikey=${process.env.API_KEY}`
+    `http://www.omdbapi.com/?s=${safeTitle}&y=${safeYear}&type=movie&apikey=${process.env.API_KEY}`
   );
   data = await response.data;
 
   if (data.Response === "False") {
     response = await axios.get(
-      `http://www.omdbapi.com/?t=${safeTitle}&y=${safeYear}&apikey=${process.env.API_KEY}`
+      `http://www.omdbapi.com/?t=${safeTitle}&y=${safeYear}&type=movie&apikey=${process.env.API_KEY}`
     );
     data = await response.data;
   }

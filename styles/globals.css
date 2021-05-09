@@ -18,12 +18,24 @@
   --mobile-max-width: 370px;
 }
 
+.remove-extra {
+  text-decoration: none;
+  list-style: none;
+}
+
 .nav-list-style {
   display: flex;
   text-decoration: none;
   list-style: none;
   width: 100%;
   align-items: center;
+}
+
+.center-flex {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .max-z-index {

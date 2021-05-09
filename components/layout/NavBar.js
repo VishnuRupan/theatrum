@@ -20,7 +20,7 @@ const NavBar = () => {
     setOpen(false);
   };
   return (
-    <StyledNav>
+    <StyledNav className="max-z-index">
       <div className="nav-container">
         <Link href="/">
           <h1 className="theatrum-logo">Theatrum</h1>
@@ -125,6 +125,7 @@ const StyledNav = styled.header`
   background: var(--main-bg-color);
   color: white;
   width: 100%;
+  position: fixed;
 
   .theatrum-logo {
     z-index: 999;

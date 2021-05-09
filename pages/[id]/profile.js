@@ -4,7 +4,6 @@ import { connectToDatabase } from "../../util/db";
 import { addMovieToList, removeMovieInList } from "../../util/movieSearch";
 
 const profile = (props) => {
-  console.log(props.likedMovies);
 
   const [session, loading] = useSession();
   const [movieList, setMovieList] = useState(props.likedMovies);
@@ -32,6 +31,10 @@ const profile = (props) => {
   };
   return (
     <div>
+      <br />
+      <br />
+      <br />
+      <br />
       {movieList.length === 5 && <h1> YOUVE REACHCHED THE LIMIT SON</h1>}
       {movieList.map((e) => (
         <div key={e.imdbID}>
