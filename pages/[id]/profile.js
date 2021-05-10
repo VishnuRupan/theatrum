@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { useSession, getSession } from "next-auth/client";
 import { connectToDatabase } from "../../util/db";
 import { addMovieToList, removeMovieInList } from "../../util/movieSearch";
+import styled from "styled-components";
 
 const profile = (props) => {
-
   const [session, loading] = useSession();
   const [movieList, setMovieList] = useState(props.likedMovies);
 
@@ -30,30 +30,55 @@ const profile = (props) => {
     }
   };
   return (
-    <div>
-      <br />
-      <br />
-      <br />
-      <br />
-      {movieList.length === 5 && <h1> YOUVE REACHCHED THE LIMIT SON</h1>}
-      {movieList.map((e) => (
-        <div key={e.imdbID}>
-          <p>
-            {e.Title} - {e.imdbID}
-          </p>
+    <ProfilePage>
+      <main className="profile-section">
+        {movieList.length === 5 && <h1> YOUVE REACHCHED THE LIMIT SON</h1>}
+        {movieList &&
+          movieList.map((e) => (
+            <div key={e.imdbID}>
+              <p>
+                {e.Title} - {e.imdbID}
+              </p>
 
-          <button onClick={() => addMovieToListHandler(e.imdbID)}>Add</button>
-          <button onClick={() => removeMovieInListHandler(e.imdbID)}>
-            Remove
-          </button>
-
-          <br />
-          <hr />
-        </div>
-      ))}
-    </div>
+              <button onClick={() => addMovieToListHandler(e.imdbID)}>
+                Add
+              </button>
+              <button onClick={() => removeMovieInListHandler(e.imdbID)}>
+                Remove
+              </button>
+            </div>
+          ))}
+      </main>
+    </ProfilePage>
   );
 };
+
+const ProfilePage = styled.div`
+  padding-top: 6rem;
+  min-height: 100vh;
+  background: var(--main-bg-color);
+  color: white;
+
+  .profile-section {
+    margin: var(--main-margin);
+
+    @media only screen and (min-width: 2000px) {
+      width: var(--max-width-rem);
+      margin: 0rem;
+      margin: auto;
+    }
+
+    @media (max-width: 900px) {
+      margin: var(--tablet-margin);
+    }
+
+    @media (max-width: 370px) {
+      margin: var(--mobile-margin);
+    }
+  }
+`;
+
+//////////////////////////////////
 
 export async function getServerSideProps(ctx) {
   const session = await getSession({ req: ctx.req });

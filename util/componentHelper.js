@@ -26,3 +26,25 @@ export const addSelectedFromUser = (arr1, arr2) => {
     return arr1;
   }
 };
+
+export const addSelectedKey = (arr1) => {
+  if (arr1 != null || arr1 != undefined) {
+    for (let i = 0; i < arr1.length; i++) {
+      arr1[i].selected = true;
+    }
+  }
+
+  return arr1;
+};
+
+export const countSelected = (arr1) => {
+  let res = arr1.reduce(function (obj, v) {
+    obj[v.selected] = (obj[v.selected] || 0) + 1;
+    return obj;
+  }, {});
+
+  if (res.true === null || res.true === 0 || res.true === undefined) {
+    res.true = 0;
+  }
+  return res.true;
+};

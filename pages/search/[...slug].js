@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import Head from "next/head";
-import axios from "axios";
 import {
   addMovieToList,
   removeMovieInList,
@@ -9,13 +8,13 @@ import {
 import {
   getPropsMovieData,
   addSelectedFromUser,
+  countSelected,
 } from "../../util/componentHelper";
 import { getSession, useSession } from "next-auth/client";
 import styled from "styled-components";
 import SearchForm from "../../components/SearchForm";
 import { connectToDatabase } from "../../util/db";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart } from "@fortawesome/free-solid-svg-icons";
+import PosterCards from "../../components/PosterCards";
 
 const MovieSearch = (props) => {
   const result = getPropsMovieData(props);
@@ -25,13 +24,11 @@ const MovieSearch = (props) => {
   );
 
   const [userList, setUserList] = useState(updatedResult);
-  const [count, setCount] = useState(props.userList.length || 0);
+  const [count, setCount] = useState(props.userList.length);
 
   const [session, loading] = useSession();
   const [error, setError] = useState("none");
   const [isLogged, setIsLogged] = useState(false);
-
-  useEffect(() => {}, [userList]);
 
   const addMovieToListHandler = async (imdbId) => {
     if (session) {
@@ -57,36 +54,6 @@ const MovieSearch = (props) => {
     }
   };
 
-  const favouriteHandler = async (e, idx, movieId) => {
-    if (!userList[idx].selected) {
-      if (count < 5) {
-        e.target.style.color = "red";
-        setCount(count + 1);
-
-        let temp = userList;
-        temp[idx].selected = true;
-        setUserList(temp);
-        temp = null;
-
-        console.log(movieId);
-
-        const response = await addMovieToListHandler(movieId);
-      }
-    } else {
-      e.target.style.color = "66ff00";
-      setCount(count - 1);
-
-      let temp = userList;
-      temp[idx].selected = false;
-      setUserList(temp);
-      temp = null;
-
-      console.log(movieId);
-
-      const response = await removeMovieFromListHandler(movieId);
-    }
-  };
-
   return (
     <Container>
       <main className="search-results">
@@ -97,56 +64,18 @@ const MovieSearch = (props) => {
         <ul className="remove-extra center-flex">
           {updatedResult.map((movie, i) => (
             <li key={movie.imdbID}>
-              <PosterCtn>
-                <img
-                  className="image-poster"
-                  src={movie.Poster}
-                  alt={movie.Title}
-                />
-
-                <h2 className="poster-title">{movie.Title}</h2>
-
-                <div className="favourite-buttons">
-                  {session ? (
-                    <FontAwesomeIcon
-                      className="fa-user"
-                      icon={faHeart}
-                      size="lg"
-                      style={
-                        userList[i].selected
-                          ? {
-                              color: "red",
-                              transition: "all 1s ease",
-                              zIndex: "50",
-                            }
-                          : {
-                              color: "#66ff00",
-                              transition: "all 1s ease",
-                              zIndex: "50",
-                            }
-                      }
-                      value={i}
-                      movieId={movie.imdbID}
-                      onClick={(e) => {
-                        favouriteHandler(e, i, movie.imdbID);
-                      }}
-                    />
-                  ) : (
-                    <FontAwesomeIcon
-                      className="fa-user"
-                      icon={faHeart}
-                      size="lg"
-                      style={{ color: "grey", zIndex: "50" }}
-                    />
-                  )}
-
-                  <FontAwesomeIcon
-                    className="fa-user fa-user-2"
-                    icon={faHeart}
-                    size="lg"
-                  />
-                </div>
-              </PosterCtn>
+              <PosterCards
+                movie={movie}
+                i={i}
+                userList={userList}
+                setUserList={setUserList}
+                session={session}
+                addMovieToListHandler={addMovieToListHandler}
+                removeMovieFromListHandler={removeMovieFromListHandler}
+                updatedResult={updatedResult}
+                count={count}
+                setCount={setCount}
+              />
             </li>
           ))}
         </ul>
@@ -193,11 +122,11 @@ const Container = styled.div`
 
   ul {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    grid-gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    grid-gap: 1.5rem;
     padding: 2rem 0rem;
 
-    @media (max-width: 320px) {
+    @media (max-width: 400px) {
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     }
   }
@@ -210,7 +139,7 @@ const PosterCtn = styled.div`
   border-bottom-left-radius: 3px;
   border-bottom-right-radius: 3px;
   box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
-  transition: all 0.2s ease-in-out;
+  border: 1px solid white;
 
   &:hover {
     transform: scale(1.02);
@@ -230,10 +159,10 @@ const PosterCtn = styled.div`
   }
 
   .poster-title {
-    font-size: 1.2rem;
+    font-size: 1rem;
     font-weight: bold;
     text-align: center;
-    padding: 1rem 0rem;
+    padding: 1rem 0.3rem;
     text-shadow: 3px 3px 0px rgba(255, 205, 205, 0.5);
   }
 
@@ -245,10 +174,9 @@ const PosterCtn = styled.div`
     right: 7%;
     font-size: 2rem;
     cursor: pointer;
-    transition: all 0.3s ease;
     z-index: 20;
     &:hover {
-      transform: scale(1.1);
+      transform: scale(1.15);
     }
   }
 
@@ -273,6 +201,8 @@ export async function getServerSideProps(ctx) {
 
   // get movies from ctx
   const data = await searchForMovies(slug[0], slug[1]);
+
+  console.log(data);
 
   // get user profile
 
