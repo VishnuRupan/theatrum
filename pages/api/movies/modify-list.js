@@ -7,6 +7,8 @@ async function handler(req, res) {
 
   const email = req.body.email;
   const imdb = req.body.imdbID;
+  const { movieTitle, movieYear, moviePoster } = req.body;
+
 
   if (session) {
     const client = await connectToDatabase();
@@ -20,8 +22,6 @@ async function handler(req, res) {
     }
 
     if (req.method === "PATCH") {
-      console.log(imdb);
-
       if (
         (await isMovieAlreadyInList(userProfile, imdb)) ||
         userProfile.likedMovies.length >= 5
@@ -33,7 +33,13 @@ async function handler(req, res) {
         return;
       }
 
-      userProfile.likedMovies.push({ imdbID: imdb });
+      userProfile.likedMovies.push({
+        imdbID: imdb,
+        Title: movieTitle,
+        Year: movieYear,
+        Poster: moviePoster,
+        selected: true,
+      });
       const updatedUserProfileAdd = await db.updateOne(
         {
           _id: userProfile._id,
@@ -48,8 +54,6 @@ async function handler(req, res) {
 
     /// delete in list
     if (req.method === "DELETE") {
-      console.log(imdb);
-
       if (!(await isMovieAlreadyInList(userProfile, imdb))) {
         res
           .status(422)

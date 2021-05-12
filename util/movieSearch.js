@@ -7,18 +7,52 @@ export const searchForMovies = async (title, year) => {
   const safeTitle = title || "";
   const safeYear = year || "";
 
-  console.log(process.env.API_KEY);
-
-  response = await axios.get(
-    `http://www.omdbapi.com/?s=${safeTitle}&y=${safeYear}&type=movie&apikey=${process.env.API_KEY}`
-  );
-  data = await response.data;
-
-  if (data.Response === "False") {
+  try {
     response = await axios.get(
-      `http://www.omdbapi.com/?t=${safeTitle}&y=${safeYear}&type=movie&apikey=${process.env.API_KEY}`
+      `http://www.omdbapi.com/?s=${safeTitle}&y=${safeYear}&type=movie&apikey=${process.env.API_KEY}`
     );
     data = await response.data;
+
+    if (data.Response === "False") {
+      response = await axios.get(
+        `http://www.omdbapi.com/?t=${safeTitle}&y=${safeYear}&type=movie&apikey=${process.env.API_KEY}`
+      );
+      data = await response.data;
+    }
+  } catch (error) {
+    data = { Response: "False" };
+  }
+
+  const bum = await getMovieById("dsadasd");
+
+  return data;
+};
+
+export const getMovieById = async (imdbID) => {
+  let response;
+  let data;
+  try {
+    response = await axios.get(
+      `https://api.themoviedb.org/3/find/${imdbID}?api_key=${process.env.TMDB_API_KEY}&language=en-US&external_source=imdb_id`
+    );
+    data = await response.data.movie_results[0];
+  } catch (error) {
+    data = null;
+  }
+
+  return data;
+};
+
+export const getSimilarMovies = async (imdbID) => {
+  let response;
+  let data;
+  try {
+    response = await axios.get(
+      `https://api.themoviedb.org/3/movie/${imdbID}/similar?api_key=${process.env.TMDB_API_KEY}&language=en-US&page=1`
+    );
+    data = await response.data.results;
+  } catch (error) {
+    data = null;
   }
 
   return data;
@@ -42,12 +76,21 @@ export const isMovieAlreadyInList = async (userProfile, imdb) => {
   return result;
 };
 
-export const addMovieToList = async (imdbId, email) => {
+export const addMovieToList = async (
+  imdbId,
+  email,
+  movieTitle,
+  movieYear,
+  moviePoster
+) => {
   const response = await fetch("/api/movies/modify-list", {
     method: "PATCH",
     body: JSON.stringify({
       email: email,
       imdbID: imdbId,
+      movieTitle: movieTitle,
+      movieYear: movieYear,
+      moviePoster: moviePoster,
     }),
     headers: {
       "Content-Type": "application/json",

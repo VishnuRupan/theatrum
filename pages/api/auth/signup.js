@@ -59,7 +59,7 @@ async function handler(req, res) {
 
       //finish
     } catch (error) {
-      console.log(error);
+     
       res.status(500);
       client.close();
     }

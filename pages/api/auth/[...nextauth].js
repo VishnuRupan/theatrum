@@ -21,7 +21,7 @@ export default NextAuth({
           throw new Error("no user found");
         }
 
-        console.log("This is cred : ", credentials);
+     
 
         const isValid = await verifyPassword(
           credentials.password,

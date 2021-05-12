@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import Head from "next/head";
 import {
   addMovieToList,
   removeMovieInList,
@@ -10,11 +9,12 @@ import {
   addSelectedFromUser,
   countSelected,
 } from "../../util/componentHelper";
-import { getSession, useSession } from "next-auth/client";
+import { getSession } from "next-auth/client";
 import styled from "styled-components";
 import SearchForm from "../../components/SearchForm";
 import { connectToDatabase } from "../../util/db";
 import PosterCards from "../../components/PosterCards";
+import IntroText from "../../components/IntroText";
 
 const MovieSearch = (props) => {
   const result = getPropsMovieData(props);
@@ -23,61 +23,38 @@ const MovieSearch = (props) => {
     props.userList
   );
 
+  const userListLen = () => {
+    return props.userList ? props.userList.length : 0;
+  };
+
   const [userList, setUserList] = useState(updatedResult);
-  const [count, setCount] = useState(props.userList.length);
-
-  const [session, loading] = useSession();
-  const [error, setError] = useState("none");
-  const [isLogged, setIsLogged] = useState(false);
-
-  const addMovieToListHandler = async (imdbId) => {
-    if (session) {
-      setIsLogged(true);
-      const { response, data } = await addMovieToList(
-        imdbId,
-        session.user.email
-      );
-    } else {
-      setIsLogged(false);
-    }
-  };
-
-  const removeMovieFromListHandler = async (imdbId) => {
-    if (session) {
-      setIsLogged(true);
-      const { response, data } = await removeMovieInList(
-        imdbId,
-        session.user.email
-      );
-    } else {
-      setIsLogged(false);
-    }
-  };
+  const [count, setCount] = useState(userListLen());
 
   return (
     <Container>
       <main className="search-results">
-        <h1 className="search-slug-title">SEARCH FOR A MOVIE</h1>
+        <IntroText first="SEARCH FOR" span="ANY" last="MOVIE" />
 
         <SearchForm />
 
         <ul className="remove-extra center-flex">
-          {updatedResult.map((movie, i) => (
-            <li key={movie.imdbID}>
-              <PosterCards
-                movie={movie}
-                i={i}
-                userList={userList}
-                setUserList={setUserList}
-                session={session}
-                addMovieToListHandler={addMovieToListHandler}
-                removeMovieFromListHandler={removeMovieFromListHandler}
-                updatedResult={updatedResult}
-                count={count}
-                setCount={setCount}
-              />
-            </li>
-          ))}
+          {updatedResult[0].Response != "False" ? (
+            updatedResult.map((movie, i) => (
+              <li key={movie.imdbID}>
+                <PosterCards
+                  userList={userList}
+                  setUserList={setUserList}
+                  movie={movie}
+                  i={i}
+                  setCount={setCount}
+                  count={count}
+                  profile={false}
+                />
+              </li>
+            ))
+          ) : (
+            <h1 style={{ color: "red" }}> umm... try again?</h1>
+          )}
         </ul>
       </main>
     </Container>
@@ -88,19 +65,6 @@ const Container = styled.div`
   padding-top: 6rem;
   min-height: 100vh;
   background: var(--main-bg-color);
-
-  .search-slug-title {
-    font-size: 3rem;
-    text-align: center;
-    font-weight: 700;
-    padding: 1rem;
-    text-shadow: 3px 3px 0px rgba(255, 205, 205, 0.5);
-    color: white;
-
-    @media (max-width: 768px) {
-      font-size: 1.5rem;
-    }
-  }
 
   .search-results {
     margin: var(--main-margin);
@@ -132,65 +96,6 @@ const Container = styled.div`
   }
 `;
 
-const PosterCtn = styled.div`
-  color: white;
-  position: relative;
-  background: black;
-  border-bottom-left-radius: 3px;
-  border-bottom-right-radius: 3px;
-  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
-  border: 1px solid white;
-
-  &:hover {
-    transform: scale(1.02);
-    box-shadow: 0 8px 16px 0 rgba(98, 98, 98, 0.2);
-  }
-
-  .image-poster {
-    width: 100%;
-    border-top-left-radius: 3px;
-    border-top-right-radius: 3px;
-    height: 500px;
-    object-fit: cover;
-
-    @media (max-width: 700px) {
-      height: 400px;
-    }
-  }
-
-  .poster-title {
-    font-size: 1rem;
-    font-weight: bold;
-    text-align: center;
-    padding: 1rem 0.3rem;
-    text-shadow: 3px 3px 0px rgba(255, 205, 205, 0.5);
-  }
-
-  .fa-user {
-    position: absolute;
-    top: 0;
-    right: 0;
-    top: 5%;
-    right: 7%;
-    font-size: 2rem;
-    cursor: pointer;
-    z-index: 20;
-    &:hover {
-      transform: scale(1.15);
-    }
-  }
-
-  .fa-user-2 {
-    font-size: 2.3rem;
-    color: #000000;
-    transform: translate(-1%, -2%);
-
-    &:hover {
-      transform: none;
-    }
-  }
-`;
-
 export async function getServerSideProps(ctx) {
   const session = await getSession({ req: ctx.req });
   let nominationLimit = null;
@@ -201,8 +106,6 @@ export async function getServerSideProps(ctx) {
 
   // get movies from ctx
   const data = await searchForMovies(slug[0], slug[1]);
-
-  console.log(data);
 
   // get user profile
 

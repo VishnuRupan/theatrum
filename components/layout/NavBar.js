@@ -4,7 +4,7 @@ import { useSession, signOut } from "next-auth/client";
 import styled from "styled-components";
 import { primeButton } from "../../styles/uiComponents";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { faUser, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { Cross as Hamburger } from "hamburger-react";
 
 const NavBar = () => {
@@ -29,14 +29,26 @@ const NavBar = () => {
         <nav>
           <StyledUL>
             <div className="desktop nav-list-style">
+              <li>
+                <div className="profile-svg">
+                  <FontAwesomeIcon
+                    className="fa-user"
+                    icon={faSearch}
+                    size="lg"
+                  />
+                </div>
+              </li>
+
               {session && (
                 <li>
                   <Link href={`/${session.user.image}/profile`}>
-                    <FontAwesomeIcon
-                      className="fa-user"
-                      icon={faUser}
-                      size="lg"
-                    />
+                    <div className="profile-svg">
+                      <FontAwesomeIcon
+                        className="fa-user"
+                        icon={faUser}
+                        size="lg"
+                      />
+                    </div>
                   </Link>
                 </li>
               )}
@@ -68,6 +80,16 @@ const NavBar = () => {
 
             {isOpen && (
               <div className="mobile nav-list-style">
+                <li>
+                  <div className="profile-svg">
+                    <FontAwesomeIcon
+                      className="fa-user"
+                      icon={faSearch}
+                      size="lg"
+                    />
+                  </div>
+                </li>
+
                 {session && (
                   <li>
                     <Link href={`/${session.user.image}/profile`}>
@@ -228,6 +250,10 @@ const StyledUL = styled.ul`
 
     @media (max-width: 768px) {
       display: flex;
+    }
+
+    @media (min-width: 769px) {
+      display: none;
     }
   }
 `;

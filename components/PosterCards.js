@@ -1,99 +1,96 @@
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
+import Link from "next/link";
+import { replaceSpaces } from "../util/inputFields";
+import React, { useState, useRef } from "react";
+import { useSession } from "next-auth/client";
+
+import { addMovieToList, removeMovieInList } from "../util/movieSearch";
 
 const PosterCards = ({
   movie,
   i,
-  session,
   userList,
-  removeMovieFromListHandler,
-  addMovieToListHandler,
   setUserList,
   count,
   setCount,
+  profile,
 }) => {
   //
 
-  console.log("i am count", count);
+  const [session, loading] = useSession();
 
-  const favouriteHandler = async (e, idx, movieId) => {
-    console.log(userList[idx].selected);
-    if (!userList[idx].selected) {
-      console.log(count);
-      if (count < 5) {
-        console.log("hi");
+  const favouriteHandler = async (e, idx) => {
+    if (session) {
+      if (!userList[idx].selected && count < 5) {
         e.target.style.color = "red";
         setCount(count + 1);
 
         let temp = userList;
         temp[idx].selected = true;
         setUserList(temp);
-        temp = null;
 
-        const response = await addMovieToListHandler(movieId);
+        const response = await addMovieToList(
+          movie.imdbID,
+          session.user.email,
+          movie.Title,
+          movie.Year,
+          movie.Poster
+        );
+      } else if (userList[idx].selected) {
+        e.target.style.color = "66ff00";
+        setCount(count - 1);
+
+        let temp = userList;
+        temp[idx].selected = false;
+        setUserList(temp);
+
+        const response = await removeMovieInList(
+          movie.imdbID,
+          session.user.email
+        );
+      } else {
+        return;
       }
-    } else {
-      e.target.style.color = "66ff00";
-      setCount(count - 1);
-
-      let temp = userList;
-      temp[idx].selected = false;
-      setUserList(temp);
-      temp = null;
-
-      console.log(movieId);
-
-      const response = await removeMovieFromListHandler(movieId);
     }
   };
 
   return (
-    <PosterCtn>
-      <img className="image-poster" src={movie.Poster} alt={movie.Title} />
+    <PosterCtn className="poster-ctn">
+      <Link href={`/movie/${movie.imdbID}/${replaceSpaces(movie.Title)}`}>
+        <img className="image-poster" src={movie.Poster} alt={movie.Title} />
+      </Link>
+      <Link href={`/movie/${movie.imdbID}/${replaceSpaces(movie.Title)}`}>
+        <h2 className="poster-title">
+          ({movie.Year}) {movie.Title}
+        </h2>
+      </Link>
 
-      <h2 className="poster-title">
-        ({movie.Year}) {movie.Title}
-      </h2>
+      {!profile && (
+        <div className="favourite-buttons">
+          {session && userList ? (
+            <FontAwesomeIcon
+              className="fa-user"
+              icon={faHeart}
+              color={userList[i].selected ? "red" : "#66ff00"}
+              style={{ zIndex: "50" }}
+              value={i}
+              onClick={(e) => {
+                favouriteHandler(e, i);
+              }}
+            />
+          ) : (
+            <FontAwesomeIcon
+              className="fa-user"
+              icon={faHeart}
+              style={{ color: "grey", zIndex: "50" }}
+            />
+          )}
 
-      <div className="favourite-buttons">
-        {session && userList ? (
-          <FontAwesomeIcon
-            className="fa-user"
-            icon={faHeart}
-            size="lg"
-            style={
-              userList[i].selected
-                ? {
-                    color: "red",
-                    zIndex: "50",
-                  }
-                : {
-                    color: "#66ff00",
-                    zIndex: "50",
-                  }
-            }
-            value={i}
-            movieId={movie.imdbID}
-            onClick={(e) => {
-              favouriteHandler(e, i, movie.imdbID);
-            }}
-          />
-        ) : (
-          <FontAwesomeIcon
-            className="fa-user"
-            icon={faHeart}
-            size="lg"
-            style={{ color: "grey", zIndex: "50" }}
-          />
-        )}
-
-        <FontAwesomeIcon
-          className="fa-user fa-user-2"
-          icon={faHeart}
-          size="lg"
-        />
-      </div>
+          <FontAwesomeIcon className="fa-user fa-user-2" icon={faHeart} />
+        </div>
+      )}
     </PosterCtn>
   );
 };
@@ -106,6 +103,8 @@ const PosterCtn = styled.div`
   border-bottom-right-radius: 3px;
   box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
   border: 1px solid white;
+  height: 100%;
+  cursor: pointer;
 
   &:hover {
     transform: scale(1.02);

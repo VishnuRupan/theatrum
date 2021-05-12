@@ -25,7 +25,7 @@ const SearchForm = () => {
     router.push(`/search/${title}/${movieYear}`);
   };
   return (
-    <FormContainer>
+    <FormContainer className="search-form-ctn">
       <form onSubmit={searchMovieHandler} className="search-form center-flex">
         <div className="form-ctn center-flex">
           <input

@@ -4,6 +4,7 @@ import {
   isEmail,
   isStrongPassword,
   isAscii,
+  isAlphanumeric,
 } from "validator";
 
 export const sanitizeFields = (name, email, password) => {
@@ -31,4 +32,17 @@ export const isValidInput = (name, email, password) => {
   } else {
     return false;
   }
+};
+
+export const replaceSpaces = (title) => {
+  const newTitle = title.replace(/\s+/g, "-").toLowerCase();
+  return newTitle;
+};
+
+export const movieImageUrlPath = (path) => {
+  return `https://image.tmdb.org/t/p/original${path}`;
+};
+
+export const getMovieYear = (date) => {
+  return date.substring(0, 4);
 };
