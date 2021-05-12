@@ -4,11 +4,13 @@ import styled from "styled-components";
 import { primeButton } from "../styles/uiComponents";
 import { useRouter } from "next/router";
 import InvalidInput from "./modal/InvalidInput";
+import { set } from "mongoose";
 
 const SearchForm = () => {
   const [title, setTitle] = useState("");
   const [movieYear, setMovieYear] = useState("");
-  const [error, setError] = useState(null);
+  const [isOpen, setIsOpen] = useState(null);
+  const [error, setError] = useState("");
 
   const router = useRouter();
 
@@ -17,6 +19,7 @@ const SearchForm = () => {
 
     if (!title || title === "") {
       setError("Please enter a title.");
+      setIsOpen(true);
       return;
     } else {
       setError(null);
@@ -50,7 +53,7 @@ const SearchForm = () => {
         </SearchButton>
       </form>
 
-      {error && <InvalidInput setError={setError} error={error} />}
+      {isOpen && <InvalidInput warning="Error" setIsOpen={setIsOpen} error={error} />}
     </FormContainer>
   );
 };

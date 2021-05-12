@@ -10,7 +10,7 @@ const InvalidInput = (props) => {
       <Alert>
         <div className="container center-flex">
           <div className="close-btn">
-            {props.setError && props.setIsOpen && (
+            {props.setIsOpen && (
               <FontAwesomeIcon
                 className="fa-user"
                 icon={faTimes}
@@ -21,11 +21,11 @@ const InvalidInput = (props) => {
           </div>
           <h2>
             {" "}
-            <span className="error">Error:</span> {props.error}
+            <span className="error">{props.warning}:</span> {props.error}
           </h2>
         </div>
 
-        {props.setIsOpen && (
+        {props.setError && (
           <div className="button-group">
             <Button
               onClick={() => {
@@ -82,6 +82,9 @@ const Alert = styled.div`
   border-bottom-left-radius: 0px;
   border-bottom-right-radius: 0px;
 
+  @media (max-width: 360px) {
+    width: 95%;
+  }
   .container {
     position: relative;
     height: 10rem;

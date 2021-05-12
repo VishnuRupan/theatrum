@@ -20,16 +20,6 @@ const profile = (props) => {
   const [isOpen, setIsOpen] = useState(null);
   const [imdb, setImdb] = useState("");
 
-  // const removeMovieInListHandler = async (imdbId) => {
-  //   if (session) {
-  //     const { response, data } = await removeMovieInList(
-  //       imdbId,
-  //       session.user.email
-  //     );
-  //     setMovieList(data);
-  //   }
-  // };
-
   const removeMovieInListHandler = async (imdbId) => {
     setImdb(imdbId);
     setIsOpen(true);
@@ -78,6 +68,7 @@ const profile = (props) => {
               ))}
             {isOpen && (
               <InvalidInput
+                warning="Confirm"
                 error="Are you sure?"
                 setIsOpen={setIsOpen}
                 setError={setConfirm}
