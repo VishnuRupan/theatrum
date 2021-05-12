@@ -12,10 +12,21 @@ import {
   unorderedListContainer,
 } from "../../styles/uiComponents";
 
+import {
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
+  CloseButton,
+} from "@chakra-ui/react";
+
 const profile = (props) => {
   const [session, loading] = useSession();
   const [movieList, setMovieList] = useState(props.likedMovies);
   const [count, setCount] = useState(props.likedMovies.length);
+  const [badgeOpen, setBadgeOpen] = useState(false);
+
+  // confirm delete state
   const [confirm, setConfirm] = useState(false);
   const [isOpen, setIsOpen] = useState(null);
   const [imdb, setImdb] = useState("");
@@ -35,6 +46,10 @@ const profile = (props) => {
       setConfirm(false);
     }
 
+    if (movieList.length === 5) {
+      setBadgeOpen(true);
+    }
+
     console.log("did not fire");
   }, [imdb, isOpen, confirm]);
 
@@ -45,6 +60,19 @@ const profile = (props) => {
 
         <TopPicks>
           <h3> Your Current Top Picks: </h3>
+          {badgeOpen && (
+            <Alert status="success" variant="solid" className="success-badge">
+              <AlertIcon />
+              You've favourited 5 movies!
+              <CloseButton
+                position="absolute"
+                right="8px"
+                top="8px"
+                onClick={() => setBadgeOpen(false)}
+              />
+            </Alert>
+          )}
+
           <ul className="search-results">
             {movieList &&
               movieList.map((movie, i) => (
@@ -92,6 +120,15 @@ const MainSection = styled(marginContainer)``;
 
 const TopPicks = styled(unorderedListContainer)`
   padding: 2rem 0rem;
+
+  .success-badge {
+    margin: 1rem 0rem;
+    width: 20rem;
+
+    @media (max-width: 400px) {
+      width: 15rem;
+    }
+  }
 
   h3 {
     font-size: 1.5rem;
