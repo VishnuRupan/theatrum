@@ -1,13 +1,8 @@
 import { useState, useEffect } from "react";
-import {
-  addMovieToList,
-  removeMovieInList,
-  searchForMovies,
-} from "../../util/movieSearch";
+import { searchForMovies } from "../../util/movieSearch";
 import {
   getPropsMovieData,
   addSelectedFromUser,
-  countSelected,
 } from "../../util/componentHelper";
 import { getSession } from "next-auth/client";
 import styled from "styled-components";
@@ -15,6 +10,10 @@ import SearchForm from "../../components/SearchForm";
 import { connectToDatabase } from "../../util/db";
 import PosterCards from "../../components/PosterCards";
 import IntroText from "../../components/IntroText";
+import {
+  unorderedListContainer,
+  marginContainer,
+} from "../../styles/uiComponents";
 
 const MovieSearch = (props) => {
   const result = getPropsMovieData(props);
@@ -31,8 +30,8 @@ const MovieSearch = (props) => {
   const [count, setCount] = useState(userListLen());
 
   return (
-    <Container>
-      <main className="search-results">
+    <Container className="main-body">
+      <MainSection>
         <IntroText first="SEARCH FOR" span="ANY" last="MOVIE" />
 
         <SearchForm />
@@ -56,45 +55,14 @@ const MovieSearch = (props) => {
             <h1 style={{ color: "red" }}> umm... try again?</h1>
           )}
         </ul>
-      </main>
+      </MainSection>
     </Container>
   );
 };
 
-const Container = styled.div`
-  padding-top: 6rem;
-  min-height: 100vh;
-  background: var(--main-bg-color);
+const Container = styled(unorderedListContainer)``;
 
-  .search-results {
-    margin: var(--main-margin);
-
-    @media only screen and (min-width: 2000px) {
-      width: var(--max-width-rem);
-      margin: 0rem;
-      margin: auto;
-    }
-
-    @media (max-width: 900px) {
-      margin: var(--tablet-margin);
-    }
-
-    @media (max-width: 370px) {
-      margin: var(--mobile-margin);
-    }
-  }
-
-  ul {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    grid-gap: 1.5rem;
-    padding: 2rem 0rem;
-
-    @media (max-width: 400px) {
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    }
-  }
-`;
+const MainSection = styled(marginContainer)``;
 
 export async function getServerSideProps(ctx) {
   const session = await getSession({ req: ctx.req });

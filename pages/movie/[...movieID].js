@@ -8,7 +8,7 @@ import {
 import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { getMovieYear, movieImageUrlPath } from "../../util/inputFields";
-import { primeButton } from "../../styles/uiComponents";
+import { marginContainer, primeButton } from "../../styles/uiComponents";
 import IntroText from "../../components/IntroText";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar, faTimes } from "@fortawesome/free-solid-svg-icons";
@@ -62,7 +62,7 @@ const MovieName = (props) => {
 
   console.log(isAdded);
   return (
-    <MoviePage>
+    <MoviePage className="main-body">
       {isOpen && (
         <PopupImage>
           <img src={movieBackdrop} alt={movie.title} />
@@ -80,7 +80,7 @@ const MovieName = (props) => {
         </div>
       )}
 
-      <main>
+      <MainMargin>
         <MovieCard>
           <div className="image-section">
             <img
@@ -153,38 +153,12 @@ const MovieName = (props) => {
             />
           </div>
         </MovieCard>
-      </main>
+      </MainMargin>
     </MoviePage>
   );
 };
 
 const MoviePage = styled.div`
-  padding-top: 7rem;
-  padding-bottom: 3rem;
-  min-height: 100vh;
-  background: var(--main-bg-color);
-  color: white;
-  overflow-x: hidden;
-  position: relative;
-
-  main {
-    margin: var(--main-margin);
-
-    @media only screen and (min-width: 2000px) {
-      width: var(--max-width-rem);
-      margin: 0rem;
-      margin: auto;
-    }
-
-    @media (max-width: 900px) {
-      margin: var(--tablet-margin);
-    }
-
-    @media (max-width: 370px) {
-      margin: var(--mobile-margin);
-    }
-  }
-
   .font-wrapper {
     position: fixed;
     padding: 0.2rem 0.6rem;
@@ -199,12 +173,13 @@ const MoviePage = styled.div`
     transform: translateX(-25%);
     bottom: 5vh;
     background: #3b3b3b;
-    transition: all 0.3s ease-in-out;
-    border: solid 1px #3b3b3b;
 
     &:hover {
-      background: #000000;
-      border: solid 1px white;
+      background: #252525;
+    }
+
+    &:active {
+      box-shadow: inset 0 0 10px #000000;
     }
   }
 
@@ -214,6 +189,8 @@ const MoviePage = styled.div`
     cursor: pointer;
   }
 `;
+
+const MainMargin = styled(marginContainer)``;
 
 const MovieCard = styled.section`
   display: flex;

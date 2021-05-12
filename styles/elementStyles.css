@@ -1,0 +1,16 @@
+.center-flex {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.main-body {
+  padding-top: 7rem;
+  min-height: 100vh;
+  background: var(--main-bg-color);
+  color: white;
+  padding-bottom: 2rem;
+  overflow-x: hidden;
+  position: relative;
+}

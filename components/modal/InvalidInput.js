@@ -10,12 +10,12 @@ const InvalidInput = (props) => {
       <Alert>
         <div className="container center-flex">
           <div className="close-btn">
-            {props.setError && (
+            {props.setError && props.setIsOpen && (
               <FontAwesomeIcon
                 className="fa-user"
                 icon={faTimes}
                 size="lg"
-                onClick={() => props.setIsOpen(null)}
+                onClick={() => props.setIsOpen(false)}
               />
             )}
           </div>
@@ -30,7 +30,7 @@ const InvalidInput = (props) => {
             <Button
               onClick={() => {
                 props.setError(true);
-                props.setIsOpen(null);
+                props.setIsOpen(false);
               }}
               className="yes-btn"
               colorScheme="green"
@@ -39,9 +39,10 @@ const InvalidInput = (props) => {
             </Button>
 
             <Button
+              className="chakra-btn"
               onClick={() => {
-                props.setError(null);
-                props.setIsOpen(null);
+                props.setError(false);
+                props.setIsOpen(false);
               }}
               className="no-btn"
               colorScheme="red"
@@ -57,15 +58,15 @@ const InvalidInput = (props) => {
 
 const InvalidInputContainer = styled.div`
   position: absolute;
-  background: rgba(27, 27, 27, 0.8);
-  min-height: 100vh;
+  background: rgba(27, 27, 27, 0.85);
+  min-height: 100%;
   min-width: 100vw;
   top: 0;
   left: 0;
 `;
 
 const Alert = styled.div`
-  position: absolute;
+  position: fixed;
   z-index: 999;
   color: black;
   background: white;

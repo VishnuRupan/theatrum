@@ -1,49 +1,61 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useSession, getSession } from "next-auth/client";
 import { connectToDatabase } from "../../util/db";
-import { addMovieToList, removeMovieInList } from "../../util/movieSearch";
+import { removeMovieInList } from "../../util/movieSearch";
 import styled from "styled-components";
 import PosterCards from "../../components/PosterCards";
 import IntroText from "../../components/IntroText";
 import InvalidInput from "../../components/modal/InvalidInput";
-import { primeButton } from "../../styles/uiComponents";
+import {
+  marginContainer,
+  primeButton,
+  unorderedListContainer,
+} from "../../styles/uiComponents";
 
 const profile = (props) => {
   const [session, loading] = useSession();
   const [movieList, setMovieList] = useState(props.likedMovies);
   const [count, setCount] = useState(props.likedMovies.length);
+  const [confirm, setConfirm] = useState(false);
+  const [isOpen, setIsOpen] = useState(null);
+  const [imdb, setImdb] = useState("");
 
-  const addMovieToListHandler = async (imdbId) => {
-    // if (session) {
-    //   const { response, data } = await addMovieToList(
-    //     imdbId,
-    //     session.user.email
-    //   );
-    //   setMovieList(data);
-    // }
-    return null;
-  };
+  // const removeMovieInListHandler = async (imdbId) => {
+  //   if (session) {
+  //     const { response, data } = await removeMovieInList(
+  //       imdbId,
+  //       session.user.email
+  //     );
+  //     setMovieList(data);
+  //   }
+  // };
 
   const removeMovieInListHandler = async (imdbId) => {
-    if (session) {
+    setImdb(imdbId);
+    setIsOpen(true);
+  };
+
+  useEffect(async () => {
+    if (session && !isOpen && confirm) {
       const { response, data } = await removeMovieInList(
-        imdbId,
+        imdb,
         session.user.email
       );
       setMovieList(data);
+      setConfirm(false);
     }
-  };
 
-  console.log("user list in add: ", movieList);
+    console.log("did not fire");
+  }, [imdb, isOpen, confirm]);
 
   return (
-    <ProfilePage>
-      <main className="profile-section">
+    <ProfilePage className="main-body">
+      <MainSection>
         <IntroText first="Welcome" span={session.user.name} last="" />
 
         <TopPicks>
           <h3> Your Current Top Picks: </h3>
-          <ul className="regular-ul remove-extra">
+          <ul className="search-results">
             {movieList &&
               movieList.map((movie, i) => (
                 <li key={movie.imdbID}>
@@ -52,8 +64,6 @@ const profile = (props) => {
                     i={i}
                     userList={movieList}
                     setUserList={setMovieList}
-                    // addMovieToListHandler={addMovieToListHandler}
-                    // removeMovieFromListHandler={removeMovieInListHandler}
                     count={count}
                     setCount={setCount}
                     profile={true}
@@ -66,62 +76,30 @@ const profile = (props) => {
                   </RemoveButton>
                 </li>
               ))}
+            {isOpen && (
+              <InvalidInput
+                error="Are you sure?"
+                setIsOpen={setIsOpen}
+                setError={setConfirm}
+              />
+            )}
           </ul>
         </TopPicks>
-      </main>
+      </MainSection>
     </ProfilePage>
   );
 };
 
 const ProfilePage = styled.div`
-  padding-top: 6rem;
-  min-height: 100vh;
-  background: var(--main-bg-color);
-  color: white;
-
-  .search-form-ctn {
-    padding: 2rem 0rem;
-
-    form {
-      justify-content: flex-start;
-      align-items: flex-start;
-      flex-direction: column;
-
-      input {
-        margin: 0rem;
-        margin-right: 0.5rem;
-      }
-      button {
-        margin: 1rem 0rem;
-      }
-    }
-  }
-
   .intro-text {
     text-align: left;
     padding: 0rem;
   }
-
-  .profile-section {
-    margin: var(--main-margin);
-
-    @media only screen and (min-width: 2000px) {
-      width: var(--max-width-rem);
-      margin: 0rem;
-      margin: auto;
-    }
-
-    @media (max-width: 900px) {
-      margin: var(--tablet-margin);
-    }
-
-    @media (max-width: 370px) {
-      margin: var(--mobile-margin);
-    }
-  }
 `;
 
-const TopPicks = styled.div`
+const MainSection = styled(marginContainer)``;
+
+const TopPicks = styled(unorderedListContainer)`
   padding: 2rem 0rem;
 
   h3 {
@@ -129,17 +107,11 @@ const TopPicks = styled.div`
     font-weight: 600;
   }
 
-  .regular-ul {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    grid-gap: 5.5rem;
-    padding: 2rem 0rem;
+  .search-results {
+    row-gap: 5.5rem;
 
     li {
       position: relative;
-    }
-
-    .poster-ctn {
       width: 20rem;
 
       img {
@@ -150,11 +122,6 @@ const TopPicks = styled.div`
         width: 15rem;
       }
     }
-  }
-
-  .singular {
-    display: flex;
-    flex-wrap: wrap;
   }
 `;
 
