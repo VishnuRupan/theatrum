@@ -7,6 +7,7 @@ import React, { useState, useRef } from "react";
 import { useSession } from "next-auth/client";
 
 import { addMovieToList, removeMovieInList } from "../util/movieSearch";
+import InvalidInput from "./modal/InvalidInput";
 
 const PosterCards = ({
   movie,
@@ -16,6 +17,7 @@ const PosterCards = ({
   count,
   setCount,
   profile,
+  setIsOpen,
 }) => {
   //
 
@@ -50,6 +52,8 @@ const PosterCards = ({
           movie.imdbID,
           session.user.email
         );
+      } else if (count === 5 && setIsOpen) {
+        setIsOpen(true);
       } else {
         return;
       }
@@ -58,10 +62,20 @@ const PosterCards = ({
 
   return (
     <PosterCtn className="poster-ctn">
-      <Link href={`/movie/${movie.imdbID}/${replaceSpaces(movie.Title)}`}>
-        <img className="image-poster" src={movie.Poster} alt={movie.Title} />
+      <Link
+        replace
+        href={`/movie/${movie.imdbID}/${replaceSpaces(movie.Title)}`}
+      >
+        <img
+          className="image-poster"
+          src={movie.Poster === "N/A" ? "/images/notfound.jpg" : movie.Poster}
+          alt={movie.Title}
+        />
       </Link>
-      <Link href={`/movie/${movie.imdbID}/${replaceSpaces(movie.Title)}`}>
+      <Link
+        replace
+        href={`/movie/${movie.imdbID}/${replaceSpaces(movie.Title)}`}
+      >
         <h2 className="poster-title">
           ({movie.Year}) {movie.Title}
         </h2>

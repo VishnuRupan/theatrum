@@ -4,7 +4,6 @@ import styled from "styled-components";
 import { primeButton } from "../styles/uiComponents";
 import { useRouter } from "next/router";
 import InvalidInput from "./modal/InvalidInput";
-import { set } from "mongoose";
 
 const SearchForm = () => {
   const [title, setTitle] = useState("");

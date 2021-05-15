@@ -2,14 +2,24 @@ import Head from "next/head";
 import { useState, useRef } from "react";
 import { checkIfMoviesExists } from "../util/movieSearch";
 import axios from "axios";
-import { useSession, signIn, signOut } from "next-auth/client";
+import { useSession, signIn, signOut, getSession } from "next-auth/client";
+import styled from "styled-components";
+import { formBox, marginContainer, primeButton } from "../styles/uiComponents";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { Spinner } from "@chakra-ui/react";
 
 const UserLogin = (props) => {
   const loginEmail = useRef();
   const loginPassword = useRef();
+  const router = useRouter();
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const loginHandler = async (e) => {
     e.preventDefault();
+    setError(null);
+    setIsLoading(true);
 
     const email = loginEmail.current.value;
     const password = loginPassword.current.value;
@@ -20,33 +30,85 @@ const UserLogin = (props) => {
       password: password,
     });
 
-    console.log("This is result", result);
+    setError(result.error);
+    const session = await getSession();
+
+    try {
+      if (session) {
+        router.push(`/${session.user.image}/profile`);
+      }
+    } catch (error) {}
+
+    setIsLoading(false);
   };
 
   return (
-    <div>
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <h2>login page</h2>
-      <form onSubmit={loginHandler}>
-        <label htmlFor="loginemail">Your Email</label>
-        <input ref={loginEmail} type="email" id="loginemail" required />
+    <div className="main-body center-flex">
+      <FormContainer>
+        <FormBox>
+          <div className="form-header">
+            <h1>Welcome Back!</h1>
+          </div>
 
-        <label htmlFor="loginpassword">Your Password</label>
-        <input
-          ref={loginPassword}
-          type="password"
-          id="loginpassword"
-          required
-        />
+          {error && (
+            <div className="error-message">
+              <p> {error}</p>
+            </div>
+          )}
+          <form onSubmit={loginHandler} className="center-flex">
+            <div className="email-ctn input-ctn">
+              <label htmlFor="loginemail">Your Email</label>
+              <input
+                ref={loginEmail}
+                type="email"
+                id="loginemail"
+                required
+                placeholder="Email Address"
+              />
+            </div>
 
-        <button type="submit">login</button>
-      </form>
+            <div className="password-ctn input-ctn">
+              <label htmlFor="loginpassword">Your Password</label>
+              <input
+                ref={loginPassword}
+                type="password"
+                id="loginpassword"
+                required
+                placeholder="Password"
+              />
+            </div>
+
+            <h4>
+              Don't have an account? <Link href="/signup">Sign Up</Link>
+            </h4>
+
+            <SubmitButton primary type="submit">
+              Login
+            </SubmitButton>
+
+            {isLoading && (
+              <div className="spinner">
+                <Spinner thickness="3px" speed="0.65s" />
+              </div>
+            )}
+          </form>
+        </FormBox>
+      </FormContainer>
     </div>
   );
 };
+
+const FormContainer = styled(marginContainer)`
+  height: 100%;
+
+  .spinner {
+  }
+`;
+
+const FormBox = styled(formBox)``;
+
+const SubmitButton = styled(primeButton)`
+  margin: 1rem 0rem;
+`;
 
 export default UserLogin;

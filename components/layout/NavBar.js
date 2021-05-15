@@ -6,16 +6,19 @@ import { primeButton } from "../../styles/uiComponents";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { Cross as Hamburger } from "hamburger-react";
+import { useRouter } from "next/router";
 
 const NavBar = () => {
   const [session, loading] = useSession();
   const [isOpen, setOpen] = useState(false);
+  const router = useRouter();
 
   const hamburgerHandler = (e) => {
     setOpen(false);
   };
 
   const logouthandler = (params) => {
+    router.push("/login");
     signOut();
     setOpen(false);
   };

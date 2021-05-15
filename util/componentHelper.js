@@ -1,12 +1,22 @@
+
 export const getPropsMovieData = (props) => {
   let result;
-  if (props.data.Search != undefined || props.data.Search != null) {
-    const arr = props.data.Search;
+
+  if (
+    props.data != undefined ||
+    props.data != null ||
+    !props.error ||
+    !props.data.length === 0
+  ) {
+    // returns response
 
     // remove duplicates
-    result = [...new Map(arr.map((item) => [item.imdbID, item])).values()];
+    result = [
+      ...new Map(props.data.map((item) => [item.imdbID, item])).values(),
+    ];
   } else {
-    result = [props.data];
+    console.log("did not get inside");
+    result = null;
   }
 
   return result;
@@ -22,8 +32,10 @@ export const addSelectedFromUser = (arr1, arr2) => {
       }
     }
     return arr1;
-  } else {
+  } else if (arr2 === null) {
     return arr1;
+  } else {
+    return [];
   }
 };
 

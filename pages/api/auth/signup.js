@@ -12,17 +12,14 @@ async function handler(req, res) {
 
       //check if body data is valid
       if (isValidInput(name, email, password)) {
-        res.status(422).json({ message: "Invalid input" });
+        res.status(406).json({ message: "Invalid input" });
 
         return;
       }
 
       //sanitize everything
-      const {
-        sanitizedName,
-        sanitizedEmail,
-        sanitizedPassword,
-      } = sanitizeFields(name, email, password);
+      const { sanitizedName, sanitizedEmail, sanitizedPassword } =
+        sanitizeFields(name, email, password);
 
       //connect to database
       const client = await connectToDatabase();
@@ -35,7 +32,7 @@ async function handler(req, res) {
       const existingUser = await db.findOne({ email: sanitizedEmail });
 
       if (existingUser) {
-        res.status(422).json({ message: "User exists" });
+        res.status(422).json({ message: "User already exists" });
         client.close();
         return;
       }
@@ -45,7 +42,8 @@ async function handler(req, res) {
         name: sanitizedName,
         email: sanitizedEmail,
         password: hashedPassword,
-        likedMovies: [{ imdbID: "" }],
+        /// when working [ {imdbID: ''} ]
+        likedMovies: [],
       };
 
       try {
@@ -59,7 +57,6 @@ async function handler(req, res) {
 
       //finish
     } catch (error) {
-     
       res.status(500);
       client.close();
     }

@@ -1,6 +1,7 @@
 import {
   addMovieToList,
   getMovieById,
+  getMovieDetails,
   getSimilarMovies,
   isMovieAlreadyInList,
   removeMovieInList,
@@ -15,6 +16,18 @@ import { faStar, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { genres } from "../../data/genre";
 import { useSession, getSession } from "next-auth/client";
 import { connectToDatabase } from "../../util/db";
+import InvalidInput from "../../components/modal/InvalidInput";
+import PosterCards from "../../components/PosterCards";
+import { Swiper, SwiperSlide } from "swiper/react";
+
+// Import Swiper styles
+import "swiper/swiper.min.css";
+import "swiper/components/pagination/pagination.min.css";
+import "swiper/components/navigation/navigation.min.css";
+// import Swiper core and required modules
+import SwiperCore, { Pagination, Navigation } from "swiper/core";
+// install Swiper modules
+SwiperCore.use([Pagination, Navigation]);
 
 const MovieName = (props) => {
   const movie = props.movieData;
@@ -23,11 +36,20 @@ const MovieName = (props) => {
   const movieYear = getMovieYear(movie.release_date);
   const genreIds = genres();
   const movieGenre = [];
+
   const [isAdded, setIsAdded] = useState(props.isAdded);
-
   const [session, loading] = useSession();
-
+  const [count, setCount] = useState(props.count);
+  const [countOpen, setCountOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+
+  // When using NextJS, getInitialProps is called before the page renders only for the first time.
+  //On subsequent page renders (client side routing), NextJS executes it on the client,
+  //but this means that data is not available before page render.
+  // isAdded does not get updated with prop the second time without useEffect
+  useEffect(() => {
+    setIsAdded(props.isAdded);
+  }, [props.imdbID]);
 
   for (let i = 0; i < movie.genre_ids.length; i++) {
     genreIds.forEach((genre) => {
@@ -36,7 +58,7 @@ const MovieName = (props) => {
   }
 
   const addMovieToListHandler = async () => {
-    if (session) {
+    if (session && !isAdded && count < 5) {
       const { response, data } = await addMovieToList(
         props.imdbID,
         session.user.email,
@@ -44,29 +66,47 @@ const MovieName = (props) => {
         movieYear,
         movieImage
       );
-
       setIsAdded(true);
     }
+    if (count === 5) {
+      setCountOpen(true);
+    }
+
     return null;
   };
 
   const removeMovieInListHandler = async () => {
-    if (session) {
+    if (session && isAdded) {
       const { response, data } = await removeMovieInList(
         props.imdbID,
         session.user.email
       );
       setIsAdded(false);
+      setCount(count - 1);
     }
   };
 
-  console.log(isAdded);
   return (
     <MoviePage className="main-body">
       {isOpen && (
         <PopupImage>
-          <img src={movieBackdrop} alt={movie.title} />
+          <img
+            src={
+              movie.backdrop_path === null
+                ? "/images/notfound.jpg"
+                : movieBackdrop
+            }
+            alt={movie.title}
+          />
         </PopupImage>
+      )}
+
+      {countOpen && (
+        <InvalidInput
+          warning="Error"
+          error="Max number of likes reached!"
+          setIsOpen={setCountOpen}
+        />
       )}
 
       {isOpen && (
@@ -85,17 +125,16 @@ const MovieName = (props) => {
           <div className="image-section">
             <img
               className="single-poster-image"
-              src={movieImage}
+              src={
+                movie.poster_path === null ? "/images/notfound.jpg" : movieImage
+              }
               alt={movie.original_title}
             />
 
             {session ? (
               <div className="btn-select-group">
                 {isAdded ? (
-                  <RemoveButton
-                    style={isAdded}
-                    onClick={removeMovieInListHandler}
-                  >
+                  <RemoveButton onClick={removeMovieInListHandler}>
                     {" "}
                     Remove From Favorites
                   </RemoveButton>
@@ -153,6 +192,25 @@ const MovieName = (props) => {
             />
           </div>
         </MovieCard>
+
+        <h3 className="similar-movies">Similar Movies</h3>
+        <Swiper
+          slidesPerView={1}
+          spaceBetween={30}
+          loop={true}
+          pagination={{
+            clickable: true,
+          }}
+          navigation={true}
+          className="mySwiper"
+        >
+          {props.similarMovies &&
+            props.similarMovies.map((movie, i) => (
+              <SwiperSlide key={movie.imdbID}>
+                <PosterCards movie={movie} i={i} profile={true} />
+              </SwiperSlide>
+            ))}
+        </Swiper>
       </MainMargin>
     </MoviePage>
   );
@@ -190,7 +248,40 @@ const MoviePage = styled.div`
   }
 `;
 
-const MainMargin = styled(marginContainer)``;
+const MainMargin = styled(marginContainer)`
+  .swiper-slide {
+    margin: 2rem 0rem;
+  }
+
+  .swiper-pagination-bullet {
+    background: white;
+  }
+
+  .swiper-button-next,
+  .swiper-button-prev {
+    color: red;
+  }
+
+  .swiper-container {
+    min-width: 15rem;
+    max-width: 20rem;
+    margin: 0rem;
+  }
+
+  .poster-ctn {
+    margin: 0rem;
+  }
+
+  .similar-movies {
+    padding-top: 3rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  .image-poster {
+    height: 300px;
+  }
+`;
 
 const MovieCard = styled.section`
   display: flex;
@@ -398,22 +489,56 @@ const RemoveButton = styled(primeButton)`
 `;
 
 export async function getServerSideProps(ctx) {
+  let response = false;
+  let count = 0;
+  const similarWithId = [];
+  const error = false;
+  let currentMovieId = "";
   const session = await getSession({ req: ctx.req });
-
+  let data = null;
   const { params } = ctx;
   const imdbID = params.movieID[0].toString();
 
-  const data = await getMovieById(imdbID);
-  const currentMovieId = data.id;
+  // get movie id from tmdb api
 
-  const similarMovies = await getSimilarMovies(currentMovieId);
-  let response = false;
+  data = await getMovieById(imdbID);
+
+  if (data === undefined) {
+    return {
+      redirect: {
+        destination: `/not-found/${imdbID}`,
+        permanent: false,
+      },
+    };
+  }
+  currentMovieId = data.id;
+
+  // get similar movies using imdb id
+  let similarMovies = await getSimilarMovies(currentMovieId);
+  if (similarMovies.length >= 4) {
+    similarMovies = similarMovies.slice(0, 3);
+  }
+
+  // make array of movie with imdb id
+
+  for (let i = 0; i < similarMovies.length; i++) {
+    const detailData = await getMovieDetails(similarMovies[i].id);
+
+    similarWithId.push({
+      Title: detailData.title,
+      Poster: movieImageUrlPath(detailData.poster_path),
+      imdbID: detailData.imdb_id,
+      Year: getMovieYear(detailData.release_date),
+    });
+  }
 
   if (session) {
     const client = await connectToDatabase();
     const db = client.db().collection("users");
 
     const userProfile = await db.findOne({ email: session.user.email });
+
+    count = userProfile.likedMovies.length;
 
     response = await isMovieAlreadyInList(userProfile, imdbID);
   } else {
@@ -423,9 +548,11 @@ export async function getServerSideProps(ctx) {
   return {
     props: {
       movieData: data,
-      similarMoviesData: similarMovies,
+      similarMovies: similarWithId,
       imdbID: imdbID,
       isAdded: response,
+      count: count,
+      error: error,
     },
   };
 }

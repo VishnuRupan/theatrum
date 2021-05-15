@@ -19,12 +19,15 @@ import {
   AlertDescription,
   CloseButton,
 } from "@chakra-ui/react";
+import SearchForm from "../../components/SearchForm";
 
 const profile = (props) => {
   const [session, loading] = useSession();
   const [movieList, setMovieList] = useState(props.likedMovies);
   const [count, setCount] = useState(props.likedMovies.length);
   const [badgeOpen, setBadgeOpen] = useState(false);
+
+  console.log("props: ", props.likedMovies.length);
 
   // confirm delete state
   const [confirm, setConfirm] = useState(false);
@@ -48,9 +51,9 @@ const profile = (props) => {
 
     if (movieList.length === 5) {
       setBadgeOpen(true);
+    } else {
+      setBadgeOpen(false);
     }
-
-    console.log("did not fire");
   }, [imdb, isOpen, confirm]);
 
   return (
@@ -74,7 +77,11 @@ const profile = (props) => {
           )}
 
           <ul className="search-results">
-            {movieList &&
+            {props.likedMovies.length === 0 ? (
+              <SearchCtn>
+                <SearchForm />
+              </SearchCtn>
+            ) : (
               movieList.map((movie, i) => (
                 <li key={movie.imdbID}>
                   <PosterCards
@@ -93,7 +100,8 @@ const profile = (props) => {
                     Remove from list
                   </RemoveButton>
                 </li>
-              ))}
+              ))
+            )}
             {isOpen && (
               <InvalidInput
                 warning="Confirm"
@@ -116,13 +124,24 @@ const ProfilePage = styled.div`
   }
 `;
 
+const SearchCtn = styled.div`
+  .search-form-ctn,
+  .search-form {
+    justify-content: flex-start;
+
+    input {
+      margin-left: 0rem;
+    }
+  }
+`;
+
 const MainSection = styled(marginContainer)``;
 
 const TopPicks = styled(unorderedListContainer)`
   padding: 2rem 0rem;
 
   .success-badge {
-    margin: 1rem 0rem;
+    margin-top: 1rem;
     width: 20rem;
 
     @media (max-width: 400px) {
@@ -172,6 +191,7 @@ const RemoveButton = styled(primeButton)`
     width: 15rem;
   }
 `;
+
 //////////////////////////////////
 
 export async function getServerSideProps(ctx) {

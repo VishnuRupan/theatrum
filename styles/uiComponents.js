@@ -53,3 +53,66 @@ export const marginContainer = styled.main`
     margin: var(--mobile-margin);
   }
 `;
+
+export const formBox = styled.div`
+  padding-top: 0rem;
+  width: 18rem;
+  background: #272727;
+  color: white;
+  border-radius: 3px;
+  box-shadow: 8px 8px 10px 0 rgba(0, 0, 0, 0.4);
+
+  .error-message {
+    padding: 0rem 2rem;
+    padding-top: 1rem;
+    margin-bottom: -1rem;
+    color: red;
+  }
+
+  .form-header {
+    background: var(--light-pink);
+    color: var(--main-bg-color);
+    padding: 1rem 2rem;
+    font-weight: 700;
+    font-size: 1.7rem;
+    text-align: center;
+  }
+
+  .input-ctn {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 100%;
+    padding: 0.5rem 0rem;
+  }
+
+  form {
+    padding: 1rem 2rem;
+  }
+
+  label,
+  h4,
+  p {
+    font-weight: 600;
+    font-size: 0.7rem;
+    padding: 0.2rem 0rem;
+  }
+  a {
+    color: #24a0ed;
+    text-decoration: underline;
+
+    &:hover {
+      color: #218ed1;
+    }
+  }
+
+  input {
+    width: 100%;
+    margin: 0.5rem 0rem;
+    padding: 0.3rem 0.4rem;
+    border-radius: 2px;
+    color: black;
+    box-shadow: 4px 4px 10px 0 rgba(0, 0, 0, 0.4);
+  }
+`;

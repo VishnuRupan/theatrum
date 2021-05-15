@@ -18,10 +18,8 @@ export default NextAuth({
 
         if (!user) {
           client.close();
-          throw new Error("no user found");
+          throw new Error("Email or password is incorrect");
         }
-
-     
 
         const isValid = await verifyPassword(
           credentials.password,
@@ -30,7 +28,7 @@ export default NextAuth({
 
         if (!isValid) {
           client.close();
-          throw new Error("wrong password");
+          throw new Error("Email or password is incorrect");
         }
 
         client.close();

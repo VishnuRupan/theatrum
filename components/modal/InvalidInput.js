@@ -63,6 +63,7 @@ const InvalidInputContainer = styled.div`
   min-width: 100vw;
   top: 0;
   left: 0;
+  z-index: 100;
 `;
 
 const Alert = styled.div`

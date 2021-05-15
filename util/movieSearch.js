@@ -23,8 +23,6 @@ export const searchForMovies = async (title, year) => {
     data = { Response: "False" };
   }
 
-  const bum = await getMovieById("dsadasd");
-
   return data;
 };
 
@@ -51,6 +49,22 @@ export const getSimilarMovies = async (imdbID) => {
       `https://api.themoviedb.org/3/movie/${imdbID}/similar?api_key=${process.env.TMDB_API_KEY}&language=en-US&page=1`
     );
     data = await response.data.results;
+  } catch (error) {
+    data = null;
+  }
+
+  return data;
+};
+
+export const getMovieDetails = async (movieid) => {
+  let response;
+  let data;
+  try {
+    response = await axios.get(
+      `https://api.themoviedb.org/3/movie/${movieid}?api_key=${process.env.TMDB_API_KEY}&language=en-US`
+    );
+    data = await response.data;
+  
   } catch (error) {
     data = null;
   }
