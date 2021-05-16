@@ -9,17 +9,18 @@ export const searchForMovies = async (title, year) => {
 
   try {
     response = await axios.get(
-      `http://www.omdbapi.com/?s=${safeTitle}&y=${safeYear}&type=movie&apikey=${process.env.API_KEY}`
+      `http://www.omdbapi.com/?s=${safeTitle}&y=${safeYear}&type=movie&apikey=${process.env.OMDB_ID}`
     );
     data = await response.data;
 
     if (data.Response === "False") {
       response = await axios.get(
-        `http://www.omdbapi.com/?t=${safeTitle}&y=${safeYear}&type=movie&apikey=${process.env.API_KEY}`
+        `http://www.omdbapi.com/?t=${safeTitle}&y=${safeYear}&type=movie&apikey=${process.env.OMDB_ID}`
       );
       data = await response.data;
     }
   } catch (error) {
+    console.log("error: ", error);
     data = { Response: "False" };
   }
 
@@ -31,7 +32,7 @@ export const getMovieById = async (imdbID) => {
   let data;
   try {
     response = await axios.get(
-      `https://api.themoviedb.org/3/find/${imdbID}?api_key=${process.env.TMDB_API_KEY}&language=en-US&external_source=imdb_id`
+      `https://api.themoviedb.org/3/find/${imdbID}?api_key=${process.env.TMDB_ID}&language=en-US&external_source=imdb_id`
     );
     data = await response.data.movie_results[0];
   } catch (error) {
@@ -46,7 +47,7 @@ export const getSimilarMovies = async (imdbID) => {
   let data;
   try {
     response = await axios.get(
-      `https://api.themoviedb.org/3/movie/${imdbID}/similar?api_key=${process.env.TMDB_API_KEY}&language=en-US&page=1`
+      `https://api.themoviedb.org/3/movie/${imdbID}/similar?api_key=${process.env.TMDB_ID}&language=en-US&page=1`
     );
     data = await response.data.results;
   } catch (error) {
@@ -61,10 +62,9 @@ export const getMovieDetails = async (movieid) => {
   let data;
   try {
     response = await axios.get(
-      `https://api.themoviedb.org/3/movie/${movieid}?api_key=${process.env.TMDB_API_KEY}&language=en-US`
+      `https://api.themoviedb.org/3/movie/${movieid}?api_key=${process.env.TMDB_ID}&language=en-US`
     );
     data = await response.data;
-  
   } catch (error) {
     data = null;
   }

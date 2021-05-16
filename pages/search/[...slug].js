@@ -20,7 +20,6 @@ import { useRouter } from "next/router";
 const MovieSearch = (props) => {
   const result = getPropsMovieData(props);
 
-
   const updatedResult = addSelectedFromUser(result, props.userList);
 
   const userListLen = () => {
@@ -30,7 +29,6 @@ const MovieSearch = (props) => {
   const [userList, setUserList] = useState(updatedResult);
   const [count, setCount] = useState(userListLen());
   const [isOpen, setIsOpen] = useState(null);
-
 
   useEffect(() => {
     setUserList(updatedResult);
@@ -102,7 +100,8 @@ export async function getServerSideProps(ctx) {
   try {
     data = await searchForMovies(slug[0], slug[1]);
     movieData = data.Search.map((v) => ({ ...v, selected: false }));
-  } catch (error) {}
+  } catch (error) {
+  }
 
   // get user profile
   if (session) {
