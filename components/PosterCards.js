@@ -41,6 +41,7 @@ const PosterCards = ({
           movie.Poster
         );
       } else if (userList[idx].selected) {
+
         e.target.style.color = "66ff00";
         setCount(count - 1);
 
@@ -87,7 +88,7 @@ const PosterCards = ({
             <FontAwesomeIcon
               className="fa-user"
               icon={faHeart}
-              color={userList[i].selected ? "red" : "#66ff00"}
+              color={movie.selected ? "red" : "#66ff00"}
               style={{ zIndex: "50" }}
               value={i}
               onClick={(e) => {

@@ -27,7 +27,6 @@ const profile = (props) => {
   const [count, setCount] = useState(props.likedMovies.length);
   const [badgeOpen, setBadgeOpen] = useState(false);
 
-  console.log("props: ", props.likedMovies.length);
 
   // confirm delete state
   const [confirm, setConfirm] = useState(false);
@@ -197,7 +196,6 @@ const RemoveButton = styled(primeButton)`
 export async function getServerSideProps(ctx) {
   const session = await getSession({ req: ctx.req });
 
-  ///console.log(session);
 
   if (!session) {
     return {
@@ -215,7 +213,6 @@ export async function getServerSideProps(ctx) {
 
   const nominationLimit = userProfile.likedMovies.length === 5 ? true : false;
   client.close();
-  ///console.log(userProfile);
 
   return {
     props: {

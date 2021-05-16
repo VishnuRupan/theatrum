@@ -15,9 +15,11 @@ import {
   marginContainer,
 } from "../../styles/uiComponents";
 import InvalidInput from "../../components/modal/InvalidInput";
+import { useRouter } from "next/router";
 
 const MovieSearch = (props) => {
   const result = getPropsMovieData(props);
+
 
   const updatedResult = addSelectedFromUser(result, props.userList);
 
@@ -28,6 +30,11 @@ const MovieSearch = (props) => {
   const [userList, setUserList] = useState(updatedResult);
   const [count, setCount] = useState(userListLen());
   const [isOpen, setIsOpen] = useState(null);
+
+
+  useEffect(() => {
+    setUserList(updatedResult);
+  }, [props]);
 
   return (
     <Container className="main-body">
