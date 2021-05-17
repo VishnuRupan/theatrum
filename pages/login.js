@@ -32,10 +32,12 @@ const UserLogin = (props) => {
 
     setError(result.error);
     const session = await getSession();
+    console.log("session in login", session);
 
     try {
       if (session) {
-        router.push(`/${session.user.image}/profile`);
+        //router.push(`/${session.user.image}/profile`);
+        router.push(`/profile`);
       }
     } catch (error) {}
 

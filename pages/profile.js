@@ -1,16 +1,16 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useSession, getSession } from "next-auth/client";
-import { connectToDatabase } from "../../util/db";
-import { removeMovieInList } from "../../util/movieSearch";
+import { connectToDatabase } from "../util/db";
+import { removeMovieInList } from "../util/movieSearch";
 import styled from "styled-components";
-import PosterCards from "../../components/PosterCards";
-import IntroText from "../../components/IntroText";
-import InvalidInput from "../../components/modal/InvalidInput";
+import PosterCards from "../components/PosterCards";
+import IntroText from "../components/IntroText";
+import InvalidInput from "../components/modal/InvalidInput";
 import {
   marginContainer,
   primeButton,
   unorderedListContainer,
-} from "../../styles/uiComponents";
+} from "../styles/uiComponents";
 
 import {
   Alert,
@@ -19,7 +19,7 @@ import {
   AlertDescription,
   CloseButton,
 } from "@chakra-ui/react";
-import SearchForm from "../../components/SearchForm";
+import SearchForm from "../components/SearchForm";
 
 const profile = (props) => {
   const [session, loading] = useSession();
