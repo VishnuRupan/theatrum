@@ -15,7 +15,6 @@ import {
   marginContainer,
 } from "../../styles/uiComponents";
 import InvalidInput from "../../components/modal/InvalidInput";
-import { useRouter } from "next/router";
 
 const MovieSearch = (props) => {
   const result = getPropsMovieData(props);

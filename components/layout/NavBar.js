@@ -34,11 +34,13 @@ const NavBar = () => {
             <div className="desktop nav-list-style">
               <li>
                 <div className="profile-svg">
-                  <FontAwesomeIcon
-                    className="fa-user"
-                    icon={faSearch}
-                    size="lg"
-                  />
+                  <Link href={`/search`}>
+                    <FontAwesomeIcon
+                      className="fa-user"
+                      icon={faSearch}
+                      size="lg"
+                    />
+                  </Link>
                 </div>
               </li>
 
@@ -84,13 +86,16 @@ const NavBar = () => {
             {isOpen && (
               <div className="mobile nav-list-style">
                 <li>
-                  <div className="profile-svg">
-                    <FontAwesomeIcon
-                      className="fa-user"
-                      icon={faSearch}
-                      size="lg"
-                    />
-                  </div>
+                  <Link href={`/search`}>
+                    <div className="profile-svg">
+                      <FontAwesomeIcon
+                        className="fa-user"
+                        icon={faSearch}
+                        size="lg"
+                        onClick={hamburgerHandler}
+                      />
+                    </div>
+                  </Link>
                 </li>
 
                 {session && (
@@ -155,6 +160,8 @@ const StyledNav = styled.header`
   .theatrum-logo {
     z-index: 999;
     cursor: pointer;
+    font-family: "Rubik", sans-serif;
+    text-transform: uppercase;
   }
 
   .fa-user {
