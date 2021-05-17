@@ -95,7 +95,7 @@ const NavBar = () => {
 
                 {session && (
                   <li>
-                    <Link href={`/${session.user.image}/profile`}>
+                    <Link href={`/profile`}>
                       <FontAwesomeIcon
                         className="fa-user"
                         icon={faUser}
