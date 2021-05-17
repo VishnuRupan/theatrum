@@ -44,7 +44,7 @@ const NavBar = () => {
 
               {session && (
                 <li>
-                  <Link href={`/${session.user.image}/profile`}>
+                  <Link href={`/profile`}>
                     <div className="profile-svg">
                       <FontAwesomeIcon
                         className="fa-user"

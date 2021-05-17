@@ -195,7 +195,6 @@ const RemoveButton = styled(primeButton)`
 export async function getServerSideProps(ctx) {
   const session = await getSession({ req: ctx.req });
 
-  console.log("session in getServer - profile: ", session);
 
   if (!session) {
     return {
@@ -211,7 +210,6 @@ export async function getServerSideProps(ctx) {
 
   const userProfile = await db.findOne({ email: session.user.email });
 
-  console.log("user-profile gSSp profile -", userProfile);
 
   const nominationLimit = userProfile.likedMovies.length === 5 ? true : false;
   client.close();
