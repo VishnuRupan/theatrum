@@ -19,6 +19,8 @@ import { connectToDatabase } from "../../util/db";
 import InvalidInput from "../../components/modal/InvalidInput";
 import PosterCards from "../../components/PosterCards";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { useRouter } from "next/router";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 
 // Import Swiper styles
 import "swiper/swiper.min.css";
@@ -36,13 +38,27 @@ const MovieName = (props) => {
   const movieYear = getMovieYear(movie.release_date);
   const genreIds = genres();
   const movieGenre = [];
+  const router = useRouter();
 
+  const movieURL = `https://theatrum.vercel.app/${router.asPath}`;
+
+  console.log(router);
   const [isAdded, setIsAdded] = useState(props.isAdded);
   const [session, loading] = useSession();
   const [count, setCount] = useState(props.count);
   const [countOpen, setCountOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
+  //copy to clipboard
+  const [text, setText] = useState("");
+  const [isCopied, setIsCopied] = useState(false);
+
+  const onCopyText = () => {
+    setIsCopied(true);
+    setTimeout(() => {
+      setIsCopied(false);
+    }, 1000);
+  };
   // When using NextJS, getInitialProps is called before the page renders only for the first time.
   //On subsequent page renders (client side routing), NextJS executes it on the client,
   //but this means that data is not available before page render.
@@ -156,7 +172,23 @@ const MovieName = (props) => {
           </div>
 
           <div className="movie-info">
-            <IntroText first={movie.title} second="" last="" />
+            <div className="movie-text-clip">
+              <IntroText first={movie.title} second="" last="" />
+
+              <CopyToClipboard text={movieURL} onCopy={onCopyText}>
+                <img
+                  src="/images/copy-clip.svg"
+                  alt="copy to clipboard"
+                  className="copy-clip-svg"
+                />
+              </CopyToClipboard>
+
+              {isCopied && (
+                <div className="copied-link">
+                  <p>Copied!</p>
+                </div>
+              )}
+            </div>
 
             <h3 className="single-movie-year"> {movieYear} </h3>
 
@@ -217,6 +249,32 @@ const MovieName = (props) => {
 };
 
 const MoviePage = styled.div`
+  position: relative;
+
+  .react-share-btn {
+    background: red;
+    height: 5rem;
+    width: 5rem;
+  }
+
+  .copied-link {
+    /* position: absolute;
+    top: 0;
+    top: 7rem;
+    right: 4rem; */
+    padding: 0.3rem 1rem;
+    height: 2rem;
+    margin-left: 1rem;
+    margin-top: 1rem;
+    box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.5),
+      inset 1px 1px 4px rgba(0, 0, 0, 0.7);
+    border-radius: 5px;
+
+    p {
+      font-size: 0.8rem;
+    }
+  }
+
   .font-wrapper {
     position: fixed;
     padding: 0.2rem 0.6rem;
@@ -245,6 +303,27 @@ const MoviePage = styled.div`
     font-size: 1rem;
 
     cursor: pointer;
+  }
+
+  @media (max-width: 850px) {
+    .copied-link {
+      position: absolute;
+      top: 0;
+      top: 7rem;
+      margin: 0;
+      right: 4rem;
+    }
+  }
+
+  @media (max-width: 600px) {
+    padding-top: 4.5rem;
+
+    .copied-link {
+      top: 0;
+      top: 4.5rem;
+      right: 50%;
+      transform: translateX(50%);
+    }
   }
 `;
 
@@ -365,6 +444,20 @@ const MovieCard = styled.section`
     }
   }
 
+  .copy-clip-svg {
+    width: 1rem;
+    margin-left: 1rem;
+    cursor: pointer;
+
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+
+  .movie-text-clip {
+    display: flex;
+  }
+
   @media (max-width: 850px) {
     .image-section {
       min-width: 15rem;
@@ -375,7 +468,7 @@ const MovieCard = styled.section`
     }
   }
 
-  @media (max-width: 500px) {
+  @media (max-width: 600px) {
     flex-direction: column-reverse;
     justify-content: center;
     align-items: center;
@@ -383,6 +476,11 @@ const MovieCard = styled.section`
 
     .image-section {
       min-width: 10rem;
+    }
+
+    .movie-text-clip {
+      align-items: center;
+      justify-content: center;
     }
 
     .single-poster-image {

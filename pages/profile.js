@@ -12,13 +12,7 @@ import {
   unorderedListContainer,
 } from "../styles/uiComponents";
 
-import {
-  Alert,
-  AlertIcon,
-  AlertTitle,
-  AlertDescription,
-  CloseButton,
-} from "@chakra-ui/react";
+import { Alert, AlertIcon, CloseButton } from "@chakra-ui/react";
 import SearchForm from "../components/SearchForm";
 
 const profile = (props) => {
@@ -195,7 +189,6 @@ const RemoveButton = styled(primeButton)`
 export async function getServerSideProps(ctx) {
   const session = await getSession({ req: ctx.req });
 
-
   if (!session) {
     return {
       redirect: {
@@ -209,7 +202,6 @@ export async function getServerSideProps(ctx) {
   const db = client.db().collection("users");
 
   const userProfile = await db.findOne({ email: session.user.email });
-
 
   const nominationLimit = userProfile.likedMovies.length === 5 ? true : false;
   client.close();
