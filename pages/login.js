@@ -1,7 +1,4 @@
-import Head from "next/head";
 import { useState, useRef } from "react";
-import { checkIfMoviesExists } from "../util/movieSearch";
-import axios from "axios";
 import { useSession, signIn, signOut, getSession } from "next-auth/client";
 import styled from "styled-components";
 import { formBox, marginContainer, primeButton } from "../styles/uiComponents";
@@ -110,5 +107,18 @@ const FormBox = styled(formBox)``;
 const SubmitButton = styled(primeButton)`
   margin: 1rem 0rem;
 `;
+
+export async function getServerSideProps(ctx) {
+  const session = await getSession({ req: ctx.req });
+
+  if (session) {
+    return {
+      redirect: {
+        destination: "/profile",
+        permanent: false,
+      },
+    };
+  }
+}
 
 export default UserLogin;
