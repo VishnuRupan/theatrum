@@ -21,13 +21,14 @@ import PosterCards from "../../components/PosterCards";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { useRouter } from "next/router";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-
+import NextHead from "../../components/layout/NextHead";
 // Import Swiper styles
 import "swiper/swiper.min.css";
 import "swiper/components/pagination/pagination.min.css";
 import "swiper/components/navigation/navigation.min.css";
 // import Swiper core and required modules
 import SwiperCore, { Pagination, Navigation } from "swiper/core";
+
 // install Swiper modules
 SwiperCore.use([Pagination, Navigation]);
 
@@ -42,7 +43,6 @@ const MovieName = (props) => {
 
   const movieURL = `https://theatrum.vercel.app/${router.asPath}`;
 
-  console.log(router);
   const [isAdded, setIsAdded] = useState(props.isAdded);
   const [session, loading] = useSession();
   const [count, setCount] = useState(props.count);
@@ -50,7 +50,6 @@ const MovieName = (props) => {
   const [isOpen, setIsOpen] = useState(false);
 
   //copy to clipboard
-  const [text, setText] = useState("");
   const [isCopied, setIsCopied] = useState(false);
 
   const onCopyText = () => {
@@ -104,6 +103,12 @@ const MovieName = (props) => {
 
   return (
     <MoviePage className="main-body">
+      <NextHead
+        title={movie.original_title}
+        desc={movie.overview}
+        year={movieYear}
+      />
+
       {isOpen && (
         <PopupImage>
           <img
@@ -258,17 +263,17 @@ const MoviePage = styled.div`
   }
 
   .copied-link {
-    /* position: absolute;
-    top: 0;
-    top: 7rem;
-    right: 4rem; */
-    padding: 0.3rem 1rem;
-    height: 2rem;
-    margin-left: 1rem;
-    margin-top: 1rem;
+    padding: 0.1rem 1rem;
+    height: 1.5rem;
     box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.5),
       inset 1px 1px 4px rgba(0, 0, 0, 0.7);
     border-radius: 5px;
+
+    position: absolute;
+    top: 0;
+    top: 8rem;
+    margin: 0;
+    right: 2rem;
 
     p {
       font-size: 0.8rem;
@@ -305,16 +310,6 @@ const MoviePage = styled.div`
     cursor: pointer;
   }
 
-  @media (max-width: 850px) {
-    .copied-link {
-      position: absolute;
-      top: 0;
-      top: 7rem;
-      margin: 0;
-      right: 4rem;
-    }
-  }
-
   @media (max-width: 600px) {
     padding-top: 4.5rem;
 
@@ -338,7 +333,7 @@ const MainMargin = styled(marginContainer)`
 
   .swiper-button-next,
   .swiper-button-prev {
-    color: red;
+    color: #ffffff;
   }
 
   .swiper-container {
