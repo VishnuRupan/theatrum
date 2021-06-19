@@ -3,6 +3,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { useRouter } from "next/router";
 import SearchForm from "../components/SearchForm";
+import NextHead from "../components/layout/NextHead";
 
 export default function Home(props) {
   const [title, setTitle] = useState("");
@@ -13,6 +14,10 @@ export default function Home(props) {
 
   return (
     <HomePage className="center-flex">
+      <NextHead
+        title={"Find Your Movie"}
+        desc="Pick your favourite movies to share with your friends and family. Theatrum makes it simple to find the movies you want to watch."
+      />
       <div className="home-page center-flex">
         <h1 className="h1-head">
           {" "}

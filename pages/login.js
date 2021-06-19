@@ -5,6 +5,7 @@ import { formBox, marginContainer, primeButton } from "../styles/uiComponents";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Spinner } from "@chakra-ui/react";
+import NextHead from "../components/layout/NextHead";
 
 const UserLogin = (props) => {
   const loginEmail = useRef();
@@ -41,6 +42,7 @@ const UserLogin = (props) => {
 
   return (
     <div className="main-body center-flex">
+      <NextHead title="Login" desc="Theatrum login page." />
       <FormContainer>
         <FormBox>
           <div className="form-header">
@@ -119,6 +121,10 @@ export async function getServerSideProps(ctx) {
       },
     };
   }
+
+  return {
+    props: {},
+  };
 }
 
 export default UserLogin;

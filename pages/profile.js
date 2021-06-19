@@ -14,6 +14,8 @@ import {
 
 import { Alert, AlertIcon, CloseButton } from "@chakra-ui/react";
 import SearchForm from "../components/SearchForm";
+import NextHead from "../components/layout/NextHead";
+import CopyClipboard from "../components/CopyClipboard";
 
 const profile = (props) => {
   const [session, loading] = useSession();
@@ -25,6 +27,20 @@ const profile = (props) => {
   const [confirm, setConfirm] = useState(false);
   const [isOpen, setIsOpen] = useState(null);
   const [imdb, setImdb] = useState("");
+
+  let stringMovieList = `${session.user.name}'s Movie List: `;
+
+  if (movieList.length > 0) {
+    movieList.forEach((movie, idx) => {
+      if (movieList.length - 1 === idx) {
+        stringMovieList =
+          `${stringMovieList}` + `${movie.Title} (${movie.Year})`;
+      } else {
+        stringMovieList =
+          `${stringMovieList}` + `${movie.Title} (${movie.Year}), `;
+      }
+    });
+  }
 
   const removeMovieInListHandler = async (imdbId) => {
     setImdb(imdbId);
@@ -50,11 +66,18 @@ const profile = (props) => {
 
   return (
     <ProfilePage className="main-body">
+      <NextHead
+        title={`${session.user.name}'s Profile`}
+        year=""
+        desc={`${session.user.name}'s profile page. Create a list of your top 5 movies to share with your friends.`}
+      />
+
       <MainSection>
         <IntroText first="Welcome" span={session.user.name} last="" />
 
         <TopPicks>
           <h3> Your Current Top Picks: </h3>
+          {movieList.length > 0 && <CopyClipboard copyText={stringMovieList} />}
           {badgeOpen && (
             <Alert status="success" variant="solid" className="success-badge">
               <AlertIcon />
@@ -113,6 +136,10 @@ const ProfilePage = styled.div`
   .intro-text {
     text-align: left;
     padding: 0rem;
+  }
+
+  .copied-text-icon {
+    padding-top: 1rem;
   }
 `;
 

@@ -10,6 +10,7 @@ import React from "react";
 import styled from "styled-components";
 
 import { formBox, marginContainer, primeButton } from "../styles/uiComponents";
+import NextHead from "../components/layout/NextHead";
 
 const SignupPage = () => {
   const nameInput = useRef();
@@ -66,6 +67,8 @@ const SignupPage = () => {
 
   return (
     <div className="main-body center-flex">
+      <NextHead title="Signup" desc="Theatrum signup page." />
+
       <FormContainer>
         <FormBox>
           <div className="form-header">

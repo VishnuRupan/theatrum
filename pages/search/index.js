@@ -6,10 +6,12 @@ import {
   unorderedListContainer,
   marginContainer,
 } from "../../styles/uiComponents";
+import NextHead from "../../components/layout/NextHead";
 
 const Search = () => {
   return (
     <Container className="main-body">
+      <NextHead title="Search Movies" desc="Search movies by title or year" />
       <MainSection>
         <IntroText first="SEARCH FOR" span="ANY" last="MOVIE" />
 

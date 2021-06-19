@@ -20,7 +20,6 @@ import InvalidInput from "../../components/modal/InvalidInput";
 import PosterCards from "../../components/PosterCards";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { useRouter } from "next/router";
-import { CopyToClipboard } from "react-copy-to-clipboard";
 import NextHead from "../../components/layout/NextHead";
 // Import Swiper styles
 import "swiper/swiper.min.css";
@@ -28,6 +27,7 @@ import "swiper/components/pagination/pagination.min.css";
 import "swiper/components/navigation/navigation.min.css";
 // import Swiper core and required modules
 import SwiperCore, { Pagination, Navigation } from "swiper/core";
+import CopyClipboard from "../../components/CopyClipboard";
 
 // install Swiper modules
 SwiperCore.use([Pagination, Navigation]);
@@ -49,15 +49,6 @@ const MovieName = (props) => {
   const [countOpen, setCountOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
-  //copy to clipboard
-  const [isCopied, setIsCopied] = useState(false);
-
-  const onCopyText = () => {
-    setIsCopied(true);
-    setTimeout(() => {
-      setIsCopied(false);
-    }, 1000);
-  };
   // When using NextJS, getInitialProps is called before the page renders only for the first time.
   //On subsequent page renders (client side routing), NextJS executes it on the client,
   //but this means that data is not available before page render.
@@ -180,19 +171,7 @@ const MovieName = (props) => {
             <div className="movie-text-clip">
               <IntroText first={movie.title} second="" last="" />
 
-              <CopyToClipboard text={movieURL} onCopy={onCopyText}>
-                <img
-                  src="/images/copy-clip.svg"
-                  alt="copy to clipboard"
-                  className="copy-clip-svg"
-                />
-              </CopyToClipboard>
-
-              {isCopied && (
-                <div className="copied-link">
-                  <p>Copied!</p>
-                </div>
-              )}
+              <CopyClipboard copyText={movieURL} />
             </div>
 
             <h3 className="single-movie-year"> {movieYear} </h3>
@@ -262,24 +241,6 @@ const MoviePage = styled.div`
     width: 5rem;
   }
 
-  .copied-link {
-    padding: 0.1rem 1rem;
-    height: 1.5rem;
-    box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.5),
-      inset 1px 1px 4px rgba(0, 0, 0, 0.7);
-    border-radius: 5px;
-
-    position: absolute;
-    top: 0;
-    top: 8rem;
-    margin: 0;
-    right: 2rem;
-
-    p {
-      font-size: 0.8rem;
-    }
-  }
-
   .font-wrapper {
     position: fixed;
     padding: 0.2rem 0.6rem;
@@ -308,17 +269,6 @@ const MoviePage = styled.div`
     font-size: 1rem;
 
     cursor: pointer;
-  }
-
-  @media (max-width: 600px) {
-    padding-top: 4.5rem;
-
-    .copied-link {
-      top: 0;
-      top: 4.5rem;
-      right: 50%;
-      transform: translateX(50%);
-    }
   }
 `;
 
@@ -439,16 +389,6 @@ const MovieCard = styled.section`
     }
   }
 
-  .copy-clip-svg {
-    width: 1rem;
-    margin-left: 1rem;
-    cursor: pointer;
-
-    &:hover {
-      transform: scale(1.1);
-    }
-  }
-
   .movie-text-clip {
     display: flex;
   }
@@ -493,6 +433,8 @@ const MovieCard = styled.section`
 
     .movie-info {
       padding: 2rem 0rem;
+      padding-top: 0rem;
+
       .single-movie-year,
       .intro-text {
         text-align: center;
