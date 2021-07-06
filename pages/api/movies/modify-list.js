@@ -9,7 +9,6 @@ async function handler(req, res) {
   const imdb = req.body.imdbID;
   const { movieTitle, movieYear, moviePoster } = req.body;
 
-
   if (session) {
     const client = await connectToDatabase();
     const db = client.db().collection("users");
@@ -40,6 +39,8 @@ async function handler(req, res) {
         Poster: moviePoster,
         selected: true,
       });
+
+      ///
       const updatedUserProfileAdd = await db.updateOne(
         {
           _id: userProfile._id,

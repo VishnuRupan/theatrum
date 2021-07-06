@@ -1,21 +1,21 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useSession, getSession } from "next-auth/client";
-import { connectToDatabase } from "../util/db";
-import { removeMovieInList } from "../util/movieSearch";
+import { connectToDatabase } from "../../util/db";
+import { removeMovieInList } from "../../util/movieSearch";
 import styled from "styled-components";
-import PosterCards from "../components/PosterCards";
-import IntroText from "../components/IntroText";
-import InvalidInput from "../components/modal/InvalidInput";
+import PosterCards from "../../components/PosterCards";
+import IntroText from "../../components/IntroText";
+import InvalidInput from "../../components/modal/InvalidInput";
 import {
   marginContainer,
   primeButton,
   unorderedListContainer,
-} from "../styles/uiComponents";
+} from "../../styles/uiComponents";
 
 import { Alert, AlertIcon, CloseButton } from "@chakra-ui/react";
-import SearchForm from "../components/SearchForm";
-import NextHead from "../components/layout/NextHead";
-import CopyClipboard from "../components/CopyClipboard";
+import SearchForm from "../../components/SearchForm";
+import NextHead from "../../components/layout/NextHead";
+import CopyClipboard from "../../components/CopyClipboard";
 
 const profile = (props) => {
   const [session, loading] = useSession();
@@ -74,6 +74,8 @@ const profile = (props) => {
 
       <MainSection>
         <IntroText first="Welcome" span={session.user.name} last="" />
+
+        <a href="/profile/friends"> Friends </a>
 
         <TopPicks>
           <h3> Your Current Top Picks: </h3>

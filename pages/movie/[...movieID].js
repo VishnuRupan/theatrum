@@ -576,6 +576,8 @@ export async function getServerSideProps(ctx) {
     count = userProfile.likedMovies.length;
 
     response = await isMovieAlreadyInList(userProfile, imdbID);
+
+    client.close();
   } else {
     response = null;
   }

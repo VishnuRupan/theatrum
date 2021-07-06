@@ -36,7 +36,7 @@ export const unorderedListContainer = styled.div`
   }
 `;
 
-export const marginContainer = styled.main`
+export const marginContainer = styled.div`
   margin: var(--main-margin);
 
   @media only screen and (min-width: 2000px) {

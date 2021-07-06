@@ -20,6 +20,13 @@
   --mobile-max-width: 370px;
 }
 
+main,
+body,
+html {
+  background: var(--main-bg-color);
+  color: white;
+}
+
 li,
 ul,
 a {
@@ -38,6 +45,3 @@ a {
 .max-z-index {
   z-index: 998;
 }
-
-
-
