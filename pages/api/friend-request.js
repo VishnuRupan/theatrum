@@ -95,6 +95,26 @@ async function handler(req, res) {
       return;
     }
 
+    if (req.method === "DELETE") {
+      // reject friend
+      const friendToBeRejected = req.body.friendToBeRejected;
+
+      const updateRequestStatus = await db.updateOne(
+        {
+          _id: userProfile._id,
+        },
+        {
+          $pull: {
+            friendsList: { email: friendToBeRejected },
+          },
+        }
+      );
+
+      //client.close();
+      res.status(201).json({ message: "Request rejected" });
+      return;
+    }
+
     //client.close();
     res.status(201).json({ message: "Friends list updated" });
   } else {

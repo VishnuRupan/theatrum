@@ -4,7 +4,11 @@ import { useSession, signOut } from "next-auth/client";
 import styled from "styled-components";
 import { primeButton } from "../../styles/uiComponents";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser, faSearch } from "@fortawesome/free-solid-svg-icons";
+import {
+  faUserCircle,
+  faSearch,
+  faUsers,
+} from "@fortawesome/free-solid-svg-icons";
 import { Cross as Hamburger } from "hamburger-react";
 import { useRouter } from "next/router";
 
@@ -46,11 +50,25 @@ const NavBar = () => {
 
               {session && (
                 <li>
+                  <Link href={`/profile/friends`}>
+                    <div className="profile-svg">
+                      <FontAwesomeIcon
+                        className="fa-user"
+                        icon={faUsers}
+                        size="lg"
+                      />
+                    </div>
+                  </Link>
+                </li>
+              )}
+
+              {session && (
+                <li>
                   <Link href={`/profile`}>
                     <div className="profile-svg">
                       <FontAwesomeIcon
                         className="fa-user"
-                        icon={faUser}
+                        icon={faUserCircle}
                         size="lg"
                       />
                     </div>
@@ -100,10 +118,23 @@ const NavBar = () => {
 
                 {session && (
                   <li>
+                    <Link href={`/profile/friends`}>
+                      <FontAwesomeIcon
+                        className="fa-user"
+                        icon={faUsers}
+                        size="lg"
+                        onClick={hamburgerHandler}
+                      />
+                    </Link>
+                  </li>
+                )}
+
+                {session && (
+                  <li>
                     <Link href={`/profile`}>
                       <FontAwesomeIcon
                         className="fa-user"
-                        icon={faUser}
+                        icon={faUserCircle}
                         size="lg"
                         onClick={hamburgerHandler}
                       />

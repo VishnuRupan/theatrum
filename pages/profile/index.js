@@ -75,8 +75,6 @@ const profile = (props) => {
       <MainSection>
         <IntroText first="Welcome" span={session.user.name} last="" />
 
-        <a href="/profile/friends"> Friends </a>
-
         <TopPicks>
           <h3> Your Current Top Picks: </h3>
           {movieList.length > 0 && <CopyClipboard copyText={stringMovieList} />}

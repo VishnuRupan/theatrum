@@ -10,6 +10,7 @@ import {
 import IntroText from "../../components/IntroText";
 import PosterCards from "../../components/PosterCards";
 import CopyClipboard from "../../components/CopyClipboard";
+import InvalidInput from "../../components/modal/InvalidInput";
 
 const Friends = (props) => {
   const [friendRequests, setFriendRequests] = useState(props.requests);
@@ -17,8 +18,13 @@ const Friends = (props) => {
   const [similarMovies, setSimilarMovies] = useState(null);
   const [simlarMoviesPerson, setSimilarMoviesPerson] = useState(null);
   const [session, loading] = useSession();
+  const [requestSent, setRequestSend] = useState("");
   const friendEmail = useRef();
+  const [friendToBeRejected, setFriendToBeRejected] = useState("");
+  const [isOpen, setIsOpen] = useState(null);
+  const [confirm, setConfirm] = useState(false);
 
+  //
   let stringMovieList =
     session === null || session === undefined
       ? " "
@@ -51,12 +57,6 @@ const Friends = (props) => {
         },
       });
     }
-
-    // let temp = friendRequests.filter((el) => el.email !== friendToBeAccepted);
-    // setFriendRequests(temp);
-    // temp = null;
-    // temp = friendRequests.find((f) => f.email === friendToBeAccepted);
-
     global.location.reload();
   };
 
@@ -72,6 +72,17 @@ const Friends = (props) => {
           "Content-Type": "application/json",
         },
       });
+
+      if (response.ok) {
+        setRequestSend(
+          `Your request has been sent to ${friendEmail.current.value}`
+        );
+        friendEmail.current.value = "";
+      } else {
+        setRequestSend(
+          `Your request failed to send to ${friendEmail.current.value}`
+        );
+      }
     }
   };
 
@@ -95,15 +106,51 @@ const Friends = (props) => {
     }
   };
 
-  useEffect(() => {}, [friendRequests, acceptedFriends]);
+  const rejectRequestHandler = async (e) => {
+    setFriendToBeRejected(e.target.value);
+
+    if (!confirm) {
+      setIsOpen(true);
+      return;
+    } else {
+      setIsOpen(false);
+    }
+  };
+
+  useEffect(async () => {
+    // fire when confirming to reject or remove friend/request
+    if (confirm) {
+      if (session) {
+        const response = await fetch("/api/friend-request", {
+          method: "DELETE",
+          body: JSON.stringify({
+            friendToBeRejected: friendToBeRejected,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      }
+
+      global.location.reload();
+    }
+  }, [friendRequests, acceptedFriends, confirm]);
 
   return (
     <FriendsPage>
+      {isOpen && (
+        <InvalidInput
+          warning="Confirm"
+          error="Are you sure?"
+          setIsOpen={setIsOpen}
+          setError={setConfirm}
+        />
+      )}
       <MainSection>
         {session && (
           <IntroText
             span={`${session.user.name}'s `}
-            last="Friend List"
+            last="Friends List"
           ></IntroText>
         )}
 
@@ -120,6 +167,14 @@ const Friends = (props) => {
 
             <Btn onClick={friendRequestHandler}>Request</Btn>
           </div>
+          <p
+            onClick={() => {
+              setRequestSend("");
+            }}
+          >
+            {requestSent}{" "}
+            {requestSent != "" && <span style={{ cursor: "pointer" }}>✕</span>}
+          </p>
         </FriendForm>
 
         <div className="friend-group">
@@ -132,11 +187,18 @@ const Friends = (props) => {
                   <div key={request.email} className="center-flex request-ctn">
                     <h4 className="friend-request-name">{request.name}</h4>
                     <Btn
-                      primary
                       value={request.email}
                       onClick={acceptFriendRequestHandler}
                     >
                       Add
+                    </Btn>
+
+                    <Btn
+                      primary
+                      value={request.email}
+                      onClick={rejectRequestHandler}
+                    >
+                      Reject
                     </Btn>
                   </div>
                 ))}
@@ -156,13 +218,20 @@ const Friends = (props) => {
                     >
                       <h4 className="friend-request-name">{accepted.name}</h4>
                       <Btn
-                        primary
                         value={accepted.email}
                         onClick={(e) => {
                           checkFriendMovies(e, accepted.name);
                         }}
                       >
                         Compare
+                      </Btn>
+
+                      <Btn
+                        primary
+                        value={accepted.email}
+                        onClick={rejectRequestHandler}
+                      >
+                        Remove
                       </Btn>
                     </div>
                   ))}
@@ -264,7 +333,7 @@ const MainSection = styled(marginContainer)`
     div {
       flex-direction: row;
       justify-content: flex-start;
-      padding: 0.5rem 0rem;
+      padding-bottom: 1.5rem;
     }
 
     button {
@@ -372,8 +441,11 @@ const FriendForm = styled(formBox)`
   }
 `;
 
-const Btn = styled(primeButton)``;
+const Btn = styled(primeButton)`
+  margin-right: 1rem;
+`;
 
+/// next.js
 export async function getServerSideProps(ctx) {
   const session = await getSession({ req: ctx.req });
 
@@ -406,8 +478,6 @@ export async function getServerSideProps(ctx) {
       }
     });
   }
-
-  const userProfileLikedMovies = userProfile.likedMovies;
 
   return {
     props: {
