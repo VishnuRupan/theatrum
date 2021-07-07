@@ -35,6 +35,7 @@ const CopyClipboard = ({ copyText }) => {
 const CopyCtn = styled.div`
   .copy-clip-svg {
     width: 0.8rem;
+    margin-left: 0.5rem;
 
     cursor: pointer;
 

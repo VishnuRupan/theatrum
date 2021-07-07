@@ -9,6 +9,7 @@ import {
 } from "../../styles/uiComponents";
 import IntroText from "../../components/IntroText";
 import PosterCards from "../../components/PosterCards";
+import CopyClipboard from "../../components/CopyClipboard";
 
 const Friends = (props) => {
   const [friendRequests, setFriendRequests] = useState(props.requests);
@@ -176,22 +177,28 @@ const Friends = (props) => {
           {similarMovies != null &&
             simlarMoviesPerson != null &&
             similarMovies.length != 0 && (
-              <div key={setSimilarMoviesPerson[0]}>
+              <div key={setSimilarMoviesPerson[0]} className="movie-match-desc">
                 <p>
                   🤘 YAY! You and <span>{simlarMoviesPerson[1]}</span> liked
                   these movies
                 </p>
+
+                {similarMovies != null && (
+                  <CopyClipboard copyText={stringMovieList} />
+                )}
               </div>
             )}
 
-          {similarMovies.length === 0 && simlarMoviesPerson.length != 0 && (
-            <div key={setSimilarMoviesPerson[0]}>
-              <p>
-                😥 AW! You and <span>{simlarMoviesPerson[1]}</span> didn't like
-                the same movies movies
-              </p>
-            </div>
-          )}
+          {similarMovies != null &&
+            similarMovies.length === 0 &&
+            simlarMoviesPerson.length != 0 && (
+              <div key={setSimilarMoviesPerson[0]}>
+                <p>
+                  😥 AW! You and <span>{simlarMoviesPerson[1]}</span> didn't
+                  like the same movies movies
+                </p>
+              </div>
+            )}
 
           <ul className="movie-results">
             {similarMovies &&
@@ -336,6 +343,10 @@ const SimilarMovieCtn = styled.div`
   li {
     margin: 1.5rem 0rem;
     margin-right: 1.5rem;
+  }
+
+  .movie-match-desc {
+    display: flex;
   }
 `;
 

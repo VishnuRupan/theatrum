@@ -30,12 +30,12 @@ async function handler(req, res) {
         });
       }
 
-      client.close();
+      //client.close();
       res.status(201).json(similarMoviesArray);
       return;
     }
 
-    client.close();
+    //client.close();
     res.status(201).json({ message: "Checked for similar movies" });
   } else {
     // Not Signed in

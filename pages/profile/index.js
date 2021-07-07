@@ -233,7 +233,7 @@ export async function getServerSideProps(ctx) {
   const userProfile = await db.findOne({ email: session.user.email });
 
   const nominationLimit = userProfile.likedMovies.length === 5 ? true : false;
-  client.close();
+  //client.close();
 
   return {
     props: {

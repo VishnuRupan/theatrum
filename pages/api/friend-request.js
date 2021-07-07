@@ -45,7 +45,7 @@ async function handler(req, res) {
         );
       }
 
-      client.close();
+      //client.close();
       res.status(201).json({ message: "Friend request sents" });
       return;
     }
@@ -90,12 +90,12 @@ async function handler(req, res) {
         );
       }
 
-      client.close();
+      //client.close();
       res.status(201).json({ message: "Friends list updated" });
       return;
     }
 
-    client.close();
+    //client.close();
     res.status(201).json({ message: "Friends list updated" });
   } else {
     // Not Signed in

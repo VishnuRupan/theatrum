@@ -48,7 +48,7 @@ async function handler(req, res) {
         { $set: { likedMovies: userProfile.likedMovies } }
       );
 
-      client.close();
+      //client.close();
       res.status(201).json(userProfile.likedMovies);
       return;
     }
@@ -59,7 +59,7 @@ async function handler(req, res) {
         res
           .status(422)
           .json({ message: `This movie has not been favourited.` });
-        client.close();
+        //client.close();
         return;
       }
 
@@ -74,12 +74,12 @@ async function handler(req, res) {
         { $set: { likedMovies: removedLikedList } }
       );
 
-      client.close();
+      //client.close();
       res.status(201).json(removedLikedList);
       return;
     }
 
-    client.close();
+    //client.close();
     res.status(201).json({ message: "Liked movies have been updated." });
   } else {
     // Not Signed in
