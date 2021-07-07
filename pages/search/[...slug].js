@@ -40,7 +40,7 @@ const MovieSearch = (props) => {
 
         <SearchForm />
 
-        <ul className="remove-extra center-flex">
+        <ul className="remove-extra movie-results">
           {!props.error ? (
             updatedResult.map((movie, i) => (
               <li key={movie.imdbID}>
@@ -83,6 +83,27 @@ const MainSection = styled(marginContainer)`
     font-size: 1.2rem;
     font-weight: 600;
   }
+
+  .movie-results {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    li {
+      margin: 1.5rem 0rem;
+      margin-right: 1.5rem;
+
+      width: 20rem;
+
+      img {
+        height: 400px;
+      }
+
+      @media (max-width: 400px) {
+        width: 15rem;
+      }
+    }
+  }
 `;
 
 export async function getServerSideProps(ctx) {
@@ -99,8 +120,7 @@ export async function getServerSideProps(ctx) {
   try {
     data = await searchForMovies(slug[0], slug[1]);
     movieData = data.Search.map((v) => ({ ...v, selected: false }));
-  } catch (error) {
-  }
+  } catch (error) {}
 
   // get user profile
   if (session) {

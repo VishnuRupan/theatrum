@@ -10,7 +10,7 @@ async function handler(req, res) {
 
     const userProfile = await db.findOne({ email: session.user.email });
 
-    if (!userProfile) {
+    if (!userProfile || session.user.email === req.body.friendEmail) {
       res.status(404).json({ message: "no user" });
       return;
     }

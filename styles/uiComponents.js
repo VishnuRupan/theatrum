@@ -24,7 +24,7 @@ export const primeButton = styled.button`
 `;
 
 export const unorderedListContainer = styled.div`
-  ul {
+  /* ul {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
     grid-gap: 1.5rem;
@@ -33,7 +33,7 @@ export const unorderedListContainer = styled.div`
     @media (max-width: 400px) {
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     }
-  }
+  } */
 `;
 
 export const marginContainer = styled.div`

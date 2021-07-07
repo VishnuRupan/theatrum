@@ -258,6 +258,8 @@ const Friends = (props) => {
               </div>
             )}
 
+          {simlarMoviesPerson === null && <p>Compare a movie with a friend!</p>}
+
           {similarMovies != null &&
             similarMovies.length === 0 &&
             simlarMoviesPerson.length != 0 && (
@@ -376,6 +378,13 @@ const MainSection = styled(marginContainer)`
 const SimilarMovieCtn = styled.div`
   padding-bottom: 3rem;
   padding-top: 1rem;
+  text-align: center;
+
+  .movie-match-desc {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
 
   p {
     font-size: 1.2rem;
@@ -404,14 +413,25 @@ const SimilarMovieCtn = styled.div`
     }
   }
 
-  ul {
+  .movie-results {
     display: flex;
     flex-wrap: wrap;
-  }
+    justify-content: center;
 
-  li {
-    margin: 1.5rem 0rem;
-    margin-right: 1.5rem;
+    li {
+      margin: 1.5rem 0rem;
+      margin-right: 1.5rem;
+
+      width: 20rem;
+
+      img {
+        height: 400px;
+      }
+
+      @media (max-width: 400px) {
+        width: 15rem;
+      }
+    }
   }
 
   .movie-match-desc {

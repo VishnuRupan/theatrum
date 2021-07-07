@@ -174,14 +174,20 @@ const TopPicks = styled(unorderedListContainer)`
   }
 
   .search-results {
-    row-gap: 5.5rem;
+    //row-gap: 5.5rem;
+    display: flex;
+    flex-wrap: wrap;
 
     li {
       position: relative;
+
+      margin: 2rem 0rem;
+      margin-right: 1.5rem;
+
       width: 20rem;
 
       img {
-        height: 300px;
+        height: 400px;
       }
 
       @media (max-width: 400px) {
