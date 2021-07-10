@@ -23,7 +23,7 @@
 <!-- rest api created with next.js api routes-->
 <!-- TABLE OF CONTENTS -->
 <details open="open">
-  <summary>Table of Contents</summary>
+  <summary><h2>Table of Contents</h2></summary>
   <ol>
     <li>
       <a href="#about-the-project">About The Project</a>
