@@ -46,7 +46,7 @@ async function handler(req, res) {
       }
 
       //client.close();
-      res.status(201).json({ message: "Friend request sents" });
+      res.status(201).json({ message: "Friend request sent" });
       return;
     }
 

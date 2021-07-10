@@ -239,11 +239,10 @@ export async function getServerSideProps(ctx) {
   const nominationLimit = userProfile.likedMovies.length === 5 ? true : false;
   //client.close();
 
+  //user profile
   return {
     props: {
-      session: session,
       likedMovies: userProfile.likedMovies,
-      email: userProfile.email,
       limit: nominationLimit,
     },
   };

@@ -80,7 +80,7 @@ async function handler(req, res) {
     }
 
     //client.close();
-    res.status(201).json({ message: "Liked movies have been updated." });
+    res.status(201).json({ message: "Liked movies has been updated." });
   } else {
     // Not Signed in
 
