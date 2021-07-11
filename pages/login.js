@@ -43,7 +43,7 @@ const UserLogin = (props) => {
   return (
     <div className="main-body center-flex">
       <NextHead title="Login" desc="Theatrum login page." />
-      <FormContainer>
+      <FormContainer className="center-flex">
         <FormBox>
           <div className="form-header">
             <h1>Welcome Back!</h1>

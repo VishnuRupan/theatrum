@@ -69,7 +69,7 @@ const SignupPage = () => {
     <div className="main-body center-flex">
       <NextHead title="Signup" desc="Theatrum signup page." />
 
-      <FormContainer>
+      <FormContainer className="center-flex">
         <FormBox>
           <div className="form-header">
             <h1>Get Started</h1>
